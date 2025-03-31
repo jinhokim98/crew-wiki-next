@@ -4,27 +4,14 @@
 
 ## Team
 
-### PM
-+ [메이슨](https://github.com/masonkimseoul)
-+ [커찬](https://github.com/leegwichan)
-+ [토다리](https://github.com/Todari)
-
 ### Frontend
 + [쿠키](https://github.com/jinhokim98)
 + [토다리](https://github.com/Todari)
-+ [제이드](https://github.com/skiende74)
 
 ### Backend
-+ [로빈](https://github.com/robinjoon)
 + [폴라](https://github.com/jinchiim)
-+ [도라](https://github.com/ChooSeoyeon)
-
-### Contents
-+ [켈리](https://github.com/kelly6bf)
-+ [커비](https://github.com/skylar1220)
-+ [타칸](https://github.com/jhon3242)
-+ [로키](https://github.com/HaiSeong)
-+ [짱수](https://github.com/zangsu)
++ [메이슨](https://github.com/masonkimseoul)
++ [리브](https://github.com/Minjoo522)
 
 
 ## 기능
