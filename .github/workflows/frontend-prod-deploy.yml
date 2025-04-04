@@ -2,12 +2,19 @@ name: frontend-prod-deploy
 
 on:
   push:
-    branches:
-      - main
+    branches: ["main"]
+    paths:
+      - "client/**"
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./client
+
     steps:
       # 1. Git 리포지토리 체크아웃
       - name: Checkout code
