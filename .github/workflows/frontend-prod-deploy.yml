@@ -33,13 +33,13 @@ jobs:
       # 4. 환경변수 파일 github secret에서 가져와서 생성
       - name: Create environments from github secrets
         run: |
-          echo "NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL }}" >> .env.prod
-          echo "NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}" >> .env.prod
-          echo "NEXT_PUBLIC_BUCKET_NAME=${{ secrets.NEXT_PUBLIC_BUCKET_NAME }}" >> .env.prod
-          echo "NEXT_PUBLIC_BUCKET_REGION=${{ secrets.NEXT_PUBLIC_BUCKET_REGION }}" >> .env.prod
-          echo "NEXT_PUBLIC_ACCESS_KEY=${{ secrets.NEXT_PUBLIC_ACCESS_KEY }}" >> .env.prod
-          echo "NEXT_PUBLIC_SECRET_KEY=${{ secrets.NEXT_PUBLIC_SECRET_KEY }}" >> .env.prod
-          echo "NEXT_PUBLIC_AMPLITUDE_API_KEY=${{ secrets.NEXT_PUBLIC_AMPLITUDE_API_KEY }}" >> .env.prod
+          echo "NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL }}" >> .env
+          echo "NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}" >> .env
+          echo "NEXT_PUBLIC_BUCKET_NAME=${{ secrets.NEXT_PUBLIC_BUCKET_NAME }}" >> .env
+          echo "NEXT_PUBLIC_BUCKET_REGION=${{ secrets.NEXT_PUBLIC_BUCKET_REGION }}" >> .env
+          echo "NEXT_PUBLIC_ACCESS_KEY=${{ secrets.NEXT_PUBLIC_ACCESS_KEY }}" >> .env
+          echo "NEXT_PUBLIC_SECRET_KEY=${{ secrets.NEXT_PUBLIC_SECRET_KEY }}" >> .env
+          echo "NEXT_PUBLIC_AMPLITUDE_API_KEY=${{ secrets.NEXT_PUBLIC_AMPLITUDE_API_KEY }}" >> .env
 
       # 5. Prod 환경으로 빌드
       - name: Build for Prod environment
