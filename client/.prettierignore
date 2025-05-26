@@ -1,0 +1,27 @@
+# node 관련
+node_modules
+package-lock.json
+yarn.lock
+
+# Next.js 빌드 결과물
+.next
+out
+dist
+build
+
+# 환경 파일
+.env
+.env.local
+
+# 퍼블릭 파일
+public
+
+# Git 관련
+.git
+.gitignore
+
+# 테스트 결과
+coverage
+
+# 기타
+.DS_Store
