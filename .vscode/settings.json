@@ -1,3 +1,5 @@
 {
-  "cSpell.words": ["BMHANNAProOTF", "DAEMOON", "hangseong", "pretendard"]
+  "cSpell.words": ["BMHANNAProOTF", "DAEMOON", "hangseong", "pretendard"],
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true
 }
