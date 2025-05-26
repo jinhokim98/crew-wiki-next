@@ -36,21 +36,21 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="w-[80%] max-w-md rounded-lg bg-primary-200 px-8 py-10 shadow-lg md:w-full">
+    <div className="w-[80%] max-w-lg rounded-lg bg-primary-200 px-8 py-10 shadow-lg md:w-full">
       <h2 className="mb-6 text-2xl font-bold text-white">관리자 로그인</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label htmlFor="username" className="mb-2 block text-sm font-medium">
-            사용자 이름
+          <label htmlFor="adminId" className="mb-2 block text-sm font-medium">
+            아이디
           </label>
           <input
             type="text"
-            id="username"
+            id="adminId"
             name="loginId"
             value={adminForm.loginId}
             onChange={handleInputChange}
             className="w-full rounded border px-3 py-2 text-black focus:outline-none focus:ring focus:ring-primary-500"
-            placeholder="사용자 이름을 입력하세요"
+            placeholder="아이디를 입력하세요"
             autoComplete="username"
           />
         </div>
