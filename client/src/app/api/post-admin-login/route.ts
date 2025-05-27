@@ -13,7 +13,18 @@ export const POST = async (request: Request) => {
     const response = await postAdminLogin({loginId, password});
 
     if (!response.ok) {
-      return NextResponse.json({error: '로그인 실패'}, {status: 401});
+      switch (response.status) {
+        case 400:
+          return NextResponse.json({error: '잘못된 요청입니다. 입력 값을 확인해주세요.'}, {status: 400});
+        case 401:
+          return NextResponse.json({error: '아이디 또는 비밀번호가 올바르지 않습니다.'}, {status: 401});
+        case 403:
+          return NextResponse.json({error: '접근 권한이 없습니다.'}, {status: 403});
+        case 500:
+          return NextResponse.json({error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'}, {status: 500});
+        default:
+          return NextResponse.json({error: '알 수 없는 오류가 발생했습니다.'}, {status: response.status});
+      }
     }
 
     const setCookieHeader = response.headers.get('set-cookie');
@@ -39,6 +50,7 @@ export const POST = async (request: Request) => {
       maxAge: 60 * 60 * 24,
       path: '/',
     });
+
     return NextResponse.json({message: '로그인 성공'});
   } catch (error) {
     console.error('로그인 처리 중 서버 오류:', error);
