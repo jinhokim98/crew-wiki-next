@@ -12,9 +12,5 @@ export const postAdminLogin = async ({loginId, password}: AdminLogin) => {
     credentials: 'include',
   });
 
-  if (!response.ok) {
-    throw new Error('로그인 요청 실패');
-  }
-
   return response;
 };
