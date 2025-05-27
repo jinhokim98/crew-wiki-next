@@ -43,16 +43,28 @@ export default function LoginForm() {
     }
 
     try {
-      await fetch('/api/post-admin-login', {
+      const response = await fetch('/api/post-admin-login', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(adminForm),
       });
 
+      if (!response.ok) {
+        if (response.status === 400 || response.status === 401) {
+          alert('아이디 또는 비밀번호가 올바르지 않습니다.');
+        } else if (response.status >= 500) {
+          alert('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+        } else {
+          alert(`알 수 없는 오류가 발생했습니다. 상태 코드: ${response.status}`);
+        }
+        return;
+      }
+
       router.replace('/admin/documents');
     } catch (error) {
       if (error instanceof Error) {
-        console.error('로그인 중 오류 발생:', error.message);
+        console.error('로그인 중 네트워크 오류 발생:', error.message);
+        alert('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.');
       }
     }
   };
@@ -93,7 +105,7 @@ export default function LoginForm() {
             onChange={handleInputChange}
             className={`w-full rounded border px-3 py-2 text-black focus:outline-none focus:ring focus:ring-primary-500 ${adminForm.password && !isValid.password ? 'border-red-500' : ''}`}
             placeholder="비밀번호를 입력하세요"
-            autoComplete="off"
+            autoComplete="new-password"
           />
           {adminForm.password && !isValid.password && (
             <p className="mt-1 text-sm text-red-600">
