@@ -7,4 +7,5 @@ export const ENDPOINT = {
   getDocumentSearch: '/document/search',
   getDocumentLogsByTitle: (title: string) => `/document/${title}/log`,
   getSpecificDocumentLog: (logId: number) => `/document/log/${logId}`,
+  postAdminLogin: '/admin/login',
 } as const;
