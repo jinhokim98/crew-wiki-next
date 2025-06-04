@@ -3,13 +3,14 @@ import DocumentContents from '@components/document/layout/DocumentContents';
 import DocumentFooter from '@components/document/layout/DocumentFooter';
 import DocumentHeader from '@components/document/layout/DocumentHeader';
 import MobileDocumentHeader from '@components/document/layout/MobileDocumentHeader';
-import type {LogParams} from '@type/PageParams.type';
+import type {UUIDLogParams} from '@type/PageParams.type';
 import markdownToHtml from '@utils/markdownToHtml';
 import {Metadata} from 'next';
 
-export async function generateMetadata({params}: LogParams): Promise<Metadata> {
-  const {title} = await params;
-  const documentTitle = decodeURI(title);
+export async function generateMetadata({params}: UUIDLogParams): Promise<Metadata> {
+  const {uuid} = await params;
+  // TODO: uuid로 title을 가져오는 함수가 필요하다.
+  const documentTitle = decodeURI(uuid);
 
   return {
     title: documentTitle,
@@ -21,16 +22,18 @@ export async function generateMetadata({params}: LogParams): Promise<Metadata> {
   };
 }
 
-const Page = async ({params}: LogParams) => {
-  const {title, logId} = await params;
+const Page = async ({params}: UUIDLogParams) => {
+  const {uuid, logId} = await params;
+  // TODO: uuid로 title을 가져오는 함수가 필요하다.
+  const title = '';
   const document = await getSpecificDocumentLog(Number(logId));
   const contents = await markdownToHtml(document.contents);
 
   return (
-    <section className="flex flex-col items-center w-full gap-6">
+    <section className="flex w-full flex-col items-center gap-6">
       <MobileDocumentHeader title={document.title} />
-      <div className="flex flex-col gap-6 w-full h-fit bg-white border-primary-100 border-solid border rounded-xl p-8 max-[768px]:p-4 max-[768px]:gap-2 ">
-        <DocumentHeader title={decodeURI(title)} />
+      <div className="flex h-fit w-full flex-col gap-6 rounded-xl border border-solid border-primary-100 bg-white p-8 max-[768px]:gap-2 max-[768px]:p-4">
+        <DocumentHeader title={title} />
         <DocumentContents contents={contents} />
       </div>
       <DocumentFooter generateTime={document.generateTime} />

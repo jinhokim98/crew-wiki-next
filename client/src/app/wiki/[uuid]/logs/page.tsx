@@ -1,11 +1,12 @@
-import type {TitleParams} from '@type/PageParams.type';
+import type {UUIDLogParams, UUIDParams} from '@type/PageParams.type';
 import {LogContent} from './LogContent';
 import {getDocumentLogsByTitle} from '@apis/document';
 import {Metadata} from 'next';
 
-export async function generateMetadata({params}: TitleParams): Promise<Metadata> {
-  const {title} = await params;
-  const documentTitle = decodeURI(title);
+export async function generateMetadata({params}: UUIDLogParams): Promise<Metadata> {
+  const {uuid} = await params;
+  // TODO: uuid -> title을 불러오는 api 필요
+  const documentTitle = uuid;
 
   return {
     title: `${documentTitle} 편집로그`,
@@ -17,23 +18,26 @@ export async function generateMetadata({params}: TitleParams): Promise<Metadata>
   };
 }
 
-const Page = async ({params}: TitleParams) => {
-  const {title} = await params;
-  const documentLogs = await getDocumentLogsByTitle(title);
+const Page = async ({params}: UUIDParams) => {
+  const {uuid} = await params;
+  // TODO: 단일 글 수정 로그 불러오기 api가 title -> uuid로 완성된 뒤에 작업가능
+  // 이 api 응답에 문서 제목을 추가로 달아줬으면 합니다.
+  const documentLogs = await getDocumentLogsByTitle(uuid);
+  const title = '';
 
   return (
-    <div className="flex flex-col w-full gap-4">
-      <div className="flex w-full gap-2 px-2 py-3 rounded-2xl bg-primary-50 font-pretendard text-md text-grayscale-800 md:gap-8">
-        <div className="w-10 ">
+    <div className="flex w-full flex-col gap-4">
+      <div className="text-md flex w-full gap-2 rounded-2xl bg-primary-50 px-2 py-3 font-pretendard text-grayscale-800 md:gap-8">
+        <div className="w-10">
           <p className="w-full text-center font-bold">버전</p>
         </div>
         <div className="grow">
           <p className="w-full text-center font-bold">생성일시</p>
         </div>
-        <div className="w-16 ">
+        <div className="w-16">
           <p className="w-full text-center font-bold">문서 크기</p>
         </div>
-        <div className="w-16 ">
+        <div className="w-16">
           <p className="w-full text-center font-bold">편집자</p>
         </div>
       </div>
