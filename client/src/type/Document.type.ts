@@ -1,5 +1,6 @@
 export interface WikiDocument {
   documentId: number;
+  documentUUID: string;
   title: string;
   contents: string;
   writer: string;
@@ -37,6 +38,7 @@ export interface UploadImageMeta {
 
 export interface RecentlyDocument {
   documentId: number;
+  documentUUID: string;
   title: string;
   generateTime: string;
 }

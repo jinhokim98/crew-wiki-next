@@ -20,6 +20,21 @@ export const getDocumentByTitle = async (title: string) => {
   }
 };
 
+export const getDocumentByUUID = async (uuid: string) => {
+  try {
+    const docs = await requestGet<WikiDocument>({
+      endpoint: `${ENDPOINT.getDocumentByUUID}/${uuid}`,
+      next: {revalidate: CACHE.time.basicRevalidate, tags: [CACHE.tag.getDocumentByUUID(uuid)]},
+    });
+
+    return docs;
+  } catch (error) {
+    if (error instanceof Error) {
+      return null;
+    }
+  }
+};
+
 export const getDocumentLogsByTitle = async (title: string) => {
   const logs = await requestGet<WikiDocumentLogSummary[]>({
     endpoint: ENDPOINT.getDocumentLogsByTitle(title),

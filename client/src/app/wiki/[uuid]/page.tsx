@@ -1,9 +1,9 @@
-import {getDocumentByTitle, getRecentlyDocuments} from '@apis/document';
+import {getDocumentByUUID, getRecentlyDocuments} from '@apis/document';
 import DocumentContents from '@components/document/layout/DocumentContents';
 import DocumentFooter from '@components/document/layout/DocumentFooter';
 import DocumentHeader from '@components/document/layout/DocumentHeader';
 import MobileDocumentHeader from '@components/document/layout/MobileDocumentHeader';
-import type {TitleParams} from '@type/PageParams.type';
+import type {UUIDParams} from '@type/PageParams.type';
 import markdownToHtml from '@utils/markdownToHtml';
 import {Metadata} from 'next';
 import {notFound} from 'next/navigation';
@@ -13,12 +13,14 @@ export const dynamicParams = true;
 export async function generateStaticParams() {
   const documents = await getRecentlyDocuments();
 
-  return documents.map(({title}) => ({title}));
+  return documents.map(({documentUUID}) => ({uuid: documentUUID}));
 }
 
-export async function generateMetadata({params}: TitleParams): Promise<Metadata> {
-  const {title} = await params;
-  const documentTitle = decodeURI(title);
+export async function generateMetadata({params}: UUIDParams): Promise<Metadata> {
+  const {uuid} = await params;
+  // uuid로 문서 제목을 요청하는 api 필요
+  // const documentTitle = decodeURI(uuid);
+  const documentTitle = uuid;
 
   return {
     title: documentTitle,
@@ -33,9 +35,9 @@ export async function generateMetadata({params}: TitleParams): Promise<Metadata>
 
 // next.js v15부터 params를 받기 위해 await를 사용해야 함
 // https://nextjs.org/docs/messages/sync-dynamic-apis
-const DocumentPage = async ({params}: TitleParams) => {
-  const {title} = await params;
-  const document = await getDocumentByTitle(title);
+const DocumentPage = async ({params}: UUIDParams) => {
+  const {uuid} = await params;
+  const document = await getDocumentByUUID(uuid);
 
   if (!document) {
     notFound();
@@ -44,9 +46,9 @@ const DocumentPage = async ({params}: TitleParams) => {
   const contents = await markdownToHtml(document.contents);
 
   return (
-    <div className="flex flex-col gap-6 w-full max-[768px]:gap-2">
+    <div className="flex w-full flex-col gap-6 max-[768px]:gap-2">
       <MobileDocumentHeader title={document.title} />
-      <section className="flex flex-col gap-6 w-full h-fit min-h-[864px] max-[768px]:gap-2 bg-white border-primary-100 border-solid border rounded-xl p-8 max-md:p-4 max-md:gap-2">
+      <section className="flex h-fit min-h-[864px] w-full flex-col gap-6 rounded-xl border border-solid border-primary-100 bg-white p-8 max-md:gap-2 max-md:p-4 max-[768px]:gap-2">
         <DocumentHeader title={document.title} />
         <DocumentContents contents={contents} />
       </section>
