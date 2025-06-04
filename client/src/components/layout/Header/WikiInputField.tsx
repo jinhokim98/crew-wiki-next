@@ -26,6 +26,7 @@ const WikiInputField = ({className, handleSubmit}: WikiInputProps) => {
     const submitter = (event.nativeEvent as SubmitEvent).submitter;
     const targetTitle = submitter?.id;
 
+    // TODO: 이 부분은 키워드 검색 api가 완성되어야 작업할 수 있음
     if (targetTitle !== 'search-icon') {
       router.push(`${URLS.wiki}/${targetTitle}`);
     } else if (titles !== undefined && titles.length !== 0) {
@@ -42,13 +43,13 @@ const WikiInputField = ({className, handleSubmit}: WikiInputProps) => {
     <form
       onSubmit={onSubmit}
       className={twMerge(
-        'flex relative h-11 px-4 py-2.5 rounded-xl bg-white border-grayscale-200 border-solid border gap-2',
+        'relative flex h-11 gap-2 rounded-xl border border-solid border-grayscale-200 bg-white px-4 py-2.5',
         className,
       )}
     >
       <input
         autoFocus
-        className="w-full outline-none font-pretendard text-base font-normal text-grayscale-800 placeholder:text-grayscale-lightText "
+        className="w-full font-pretendard text-base font-normal text-grayscale-800 outline-none placeholder:text-grayscale-lightText"
         placeholder="검색할 문서의 제목을 입력하세요."
         value={value}
         onChange={onChange}

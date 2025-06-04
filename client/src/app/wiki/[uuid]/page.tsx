@@ -18,7 +18,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({params}: UUIDParams): Promise<Metadata> {
   const {uuid} = await params;
-  // uuid로 문서 제목을 요청하는 api 필요
+  // TODO uuid로 문서 제목을 요청하는 api 필요
   // const documentTitle = decodeURI(uuid);
   const documentTitle = uuid;
 

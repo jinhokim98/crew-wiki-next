@@ -61,7 +61,7 @@ export const getRandomDocument = async () => {
     cache: 'no-cache',
   });
 
-  return docs.title;
+  return docs.documentUUID;
 };
 
 interface RecentlyDocumentsResponse {
