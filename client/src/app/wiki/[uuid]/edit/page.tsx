@@ -5,7 +5,7 @@ import {DocumentWriteContextProvider, useDocumentWriteContext} from '@context/Do
 import TitleInputField from '@components/document/Write/TitleInputField';
 import TuiEditor from '@components/document/TuiEditor';
 import {useParams} from 'next/navigation';
-import {useGetDocumentByTitle} from '@hooks/fetch/useGetDocumentByTitle';
+import {useGetDocumentByUUID} from '@hooks/fetch/useGetDocumentByUUID';
 
 const EditPage = () => {
   const {contentsProps} = useDocumentWriteContext();
@@ -20,9 +20,8 @@ const EditPage = () => {
 };
 
 const Page = () => {
-  const {title} = useParams();
-  const {document} = useGetDocumentByTitle(title as string);
-
+  const {uuid} = useParams();
+  const {document} = useGetDocumentByUUID(uuid as string);
   return (
     document && (
       <DocumentWriteContextProvider mode="edit" title={document.title} contents={document.contents}>
