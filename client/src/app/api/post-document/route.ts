@@ -10,6 +10,7 @@ import {NextRequest, NextResponse} from 'next/server';
 
 const postDocument = async (document: PostDocumentContent) => {
   const response = await requestPost<WikiDocument>({
+    baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
     endpoint: ENDPOINT.postDocument,
     body: document,
   });

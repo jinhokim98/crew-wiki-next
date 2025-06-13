@@ -8,43 +8,26 @@ import {
   ServerCreateRequestInitProps,
 } from '../http.type';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-
-export const requestGet = async <T>({
-  headers = {},
-  baseUrl = API_BASE_URL,
-  ...args
-}: ServerHttpMethodArgs): Promise<T> => {
+export const requestGet = async <T>({headers = {}, ...args}: ServerHttpMethodArgs): Promise<T> => {
   return await request<T>({
     ...args,
-    baseUrl,
     method: 'GET',
     headers,
     cache: args.cache ?? 'force-cache',
   });
 };
 
-export const requestPost = async <T>({
-  headers = {},
-  baseUrl = API_BASE_URL,
-  ...args
-}: ServerHttpMethodArgs): Promise<T> => {
+export const requestPost = async <T>({headers = {}, ...args}: ServerHttpMethodArgs): Promise<T> => {
   return await request<T>({
     ...args,
-    baseUrl,
     method: 'POST',
     headers,
   });
 };
 
-export const requestPut = async <T>({
-  headers = {},
-  baseUrl = API_BASE_URL,
-  ...args
-}: ServerHttpMethodArgs): Promise<T> => {
+export const requestPut = async <T>({headers = {}, ...args}: ServerHttpMethodArgs): Promise<T> => {
   return await request<T>({
     ...args,
-    baseUrl,
     method: 'PUT',
     headers,
   });
@@ -56,16 +39,7 @@ const objectToQueryString = (params: ObjectQueryParams): string => {
     .join('&');
 };
 
-const prepareRequest = ({
-  baseUrl = API_BASE_URL,
-  method,
-  endpoint,
-  headers,
-  body,
-  queryParams,
-  next,
-  cache,
-}: ServerHttpArgs) => {
+const prepareRequest = ({baseUrl, method, endpoint, headers, body, queryParams, next, cache}: ServerHttpArgs) => {
   let url = `${baseUrl}${endpoint}`;
   if (queryParams) url += `?${objectToQueryString(queryParams)}`;
 

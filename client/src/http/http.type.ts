@@ -10,7 +10,7 @@ export type BaseCreateRequestInitProps = {
 };
 
 export type BaseHttpArgs = BaseCreateRequestInitProps & {
-  baseUrl?: string;
+  baseUrl: string;
   endpoint: string;
   queryParams?: ObjectQueryParams;
 };

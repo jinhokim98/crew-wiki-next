@@ -11,6 +11,7 @@ import {CACHE} from '@constants/cache';
 
 const putDocument = async (document: PostDocumentContent) => {
   const response = await requestPut<WikiDocument>({
+    baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
     endpoint: `${ENDPOINT.updateDocument}/${document.title}`,
     body: {
       writer: document.writer,
