@@ -1,53 +1,50 @@
 'use server';
 
-type Method = 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
-
-type HeadersType = [string, string][] | Record<string, string> | Headers;
-type ObjectQueryParams = Record<string, string | number | boolean>;
-
-type httpArgs = CreateRequestInitProps & {
-  baseUrl?: string;
-  endpoint: string;
-  queryParams?: ObjectQueryParams;
-};
-
-type HttpMethodArgs = Omit<httpArgs, 'method'>;
-
-type FetchType = {
-  url: string;
-  requestInit: RequestInit;
-};
-
-type CreateRequestInitProps = {
-  body?: BodyInit | object | null;
-  method: Method;
-  headers?: HeadersType;
-  cache?: RequestCache;
-  next?: NextFetchRequestConfig;
-};
+import {
+  FetchType,
+  ObjectQueryParams,
+  ServerHttpArgs,
+  ServerHttpMethodArgs,
+  ServerCreateRequestInitProps,
+} from '../http.type';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export const requestGet = async <T>({headers = {}, ...args}: HttpMethodArgs): Promise<T> => {
+export const requestGet = async <T>({
+  headers = {},
+  baseUrl = API_BASE_URL,
+  ...args
+}: ServerHttpMethodArgs): Promise<T> => {
   return await request<T>({
     ...args,
+    baseUrl,
     method: 'GET',
     headers,
     cache: args.cache ?? 'force-cache',
   });
 };
 
-export const requestPost = async <T>({headers = {}, ...args}: HttpMethodArgs): Promise<T> => {
+export const requestPost = async <T>({
+  headers = {},
+  baseUrl = API_BASE_URL,
+  ...args
+}: ServerHttpMethodArgs): Promise<T> => {
   return await request<T>({
     ...args,
+    baseUrl,
     method: 'POST',
     headers,
   });
 };
 
-export const requestPut = async <T>({headers = {}, ...args}: HttpMethodArgs): Promise<T> => {
+export const requestPut = async <T>({
+  headers = {},
+  baseUrl = API_BASE_URL,
+  ...args
+}: ServerHttpMethodArgs): Promise<T> => {
   return await request<T>({
     ...args,
+    baseUrl,
     method: 'PUT',
     headers,
   });
@@ -68,7 +65,7 @@ const prepareRequest = ({
   queryParams,
   next,
   cache,
-}: httpArgs) => {
+}: ServerHttpArgs) => {
   let url = `${baseUrl}${endpoint}`;
   if (queryParams) url += `?${objectToQueryString(queryParams)}`;
 
@@ -77,7 +74,7 @@ const prepareRequest = ({
   return {url, requestInit};
 };
 
-const createRequestInit = ({method, headers, body, cache, next}: CreateRequestInitProps) => {
+const createRequestInit = ({method, headers, body, cache, next}: ServerCreateRequestInitProps) => {
   const requestInit: RequestInit = {
     credentials: 'include',
     method,
@@ -96,7 +93,7 @@ const createRequestInit = ({method, headers, body, cache, next}: CreateRequestIn
   }
 };
 
-const request = async <T>(args: httpArgs) => {
+const request = async <T>(args: ServerHttpArgs) => {
   const {url, requestInit} = prepareRequest(args);
   const response = await executeRequest({url, requestInit});
 
