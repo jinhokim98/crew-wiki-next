@@ -6,7 +6,19 @@ export function processImageHtml(html: string): string {
     try {
       const replacedSrc = src.replace(s3Domain, cloudfrontDomain);
 
-      return `<img ${before}src="${replacedSrc}"${after}>`;
+      const url = new URL(replacedSrc);
+      const pathParts = url.pathname.split('/');
+      const filename = pathParts[pathParts.length - 1];
+
+      const hasExtension = /\.(jpeg|jpg|png|gif|webp)$/i.test(filename);
+      const processedFilename = hasExtension ? filename : `${filename.replace(/\.[^/.]+$/, '')}.jpeg`;
+
+      pathParts[pathParts.length - 1] = processedFilename;
+      url.pathname = pathParts.join('/');
+
+      const processedSrc = url.toString();
+
+      return `<img ${before}src="${processedSrc}"${after}>`;
     } catch {
       return match;
     }
