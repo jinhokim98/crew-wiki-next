@@ -14,7 +14,6 @@ import {usePostDocument} from '@hooks/mutation/usePostDocument';
 import {usePutDocument} from '@hooks/mutation/usePutDocument';
 import {replaceLocalUrlToS3Url} from '@utils/replaceLocalUrlToS3Url';
 import {EDITOR} from '@constants/editor';
-import {generateDocumentUUID} from '@apis/document.client';
 import {useParams} from 'next/navigation';
 
 export type TitleProps = {
@@ -106,7 +105,7 @@ export const DocumentWriteContextProvider = ({children, ...initialData}: Documen
   const {putDocument, isPutPending} = usePutDocument();
 
   const onPostSubmit = async () => {
-    const uuid = await generateDocumentUUID();
+    const uuid = crypto.randomUUID();
     const newMetaList = await uploadImages({documentUUID: uuid, uploadImageMetaList: images});
     const linkReplacedContents = replaceLocalUrlToS3Url(contents, newMetaList);
 
