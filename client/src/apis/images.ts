@@ -1,17 +1,17 @@
 'use client';
 
 import {ENDPOINT} from '@constants/endpoint';
-import {httpClient} from '@http/client';
+import {requestGetClient, requestPutClient} from '@http/client';
 import {UploadImageMeta} from '@type/Document.type';
 import Resizer from 'react-image-file-resizer';
 
 const uploadImageToS3 = async (uploadImageKey: string, image: File) => {
-  const presignedUrl = await httpClient.get<string>({
+  const presignedUrl = await requestGetClient<string>({
     baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
     endpoint: `${ENDPOINT.getPresignedUrl}/${uploadImageKey}`,
   });
 
-  await httpClient.put({
+  await requestPutClient({
     baseUrl: '',
     endpoint: presignedUrl,
     body: image,
