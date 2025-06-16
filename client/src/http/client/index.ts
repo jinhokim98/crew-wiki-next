@@ -3,7 +3,7 @@
 import {objectToQueryString} from '../common';
 import {ClientCreateRequestInitProps, ClientHttpArgs, ClientHttpMethodArgs, FetchType} from '@type/http.type';
 
-const requestGet = async <T>({headers = {}, ...args}: ClientHttpMethodArgs): Promise<T> => {
+export const requestGetClient = async <T>({headers = {}, ...args}: ClientHttpMethodArgs): Promise<T> => {
   return await request<T>({
     ...args,
     method: 'GET',
@@ -11,7 +11,7 @@ const requestGet = async <T>({headers = {}, ...args}: ClientHttpMethodArgs): Pro
   });
 };
 
-const requestPost = async <T>({headers = {}, ...args}: ClientHttpMethodArgs): Promise<T> => {
+export const requestPostClient = async <T>({headers = {}, ...args}: ClientHttpMethodArgs): Promise<T> => {
   return await request<T>({
     ...args,
     method: 'POST',
@@ -19,18 +19,12 @@ const requestPost = async <T>({headers = {}, ...args}: ClientHttpMethodArgs): Pr
   });
 };
 
-const requestPut = async <T>({headers = {}, ...args}: ClientHttpMethodArgs): Promise<T> => {
+export const requestPutClient = async <T>({headers = {}, ...args}: ClientHttpMethodArgs): Promise<T> => {
   return await request<T>({
     ...args,
     method: 'PUT',
     headers,
   });
-};
-
-export const httpClient = {
-  get: requestGet,
-  post: requestPost,
-  put: requestPut,
 };
 
 const prepareRequest = ({baseUrl, method, endpoint, headers, body, queryParams}: ClientHttpArgs) => {
