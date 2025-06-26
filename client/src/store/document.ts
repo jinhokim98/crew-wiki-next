@@ -28,6 +28,7 @@ type Action = {
   addImage: (newImage: UploadImageMeta) => void;
   onChange: (value: string, field: ExcludeImages) => void;
   onBlur: (value: string, field: ExcludeImages, list?: string[]) => void;
+  reset: () => void;
 };
 
 const validators: Map<Field, Validators> = new Map();
@@ -112,6 +113,23 @@ export const useDocument = create<State & Action>((set, get) => ({
       values: {
         ...state.values,
         images: [...state.values.images, newImage],
+      },
+    }));
+  },
+
+  reset: () => {
+    set(() => ({
+      values: {
+        title: '',
+        writer: '',
+        contents: '',
+        images: [],
+      },
+      errorMessages: {
+        title: null,
+        writer: null,
+        contents: null,
+        images: null,
       },
     }));
   },
