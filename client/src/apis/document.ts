@@ -37,11 +37,11 @@ export const getDocumentByUUID = async (uuid: string) => {
   }
 };
 
-export const getDocumentLogsByTitle = async (title: string) => {
+export const getDocumentLogsByUUID = async (uuid: string) => {
   const logs = await requestGetServer<WikiDocumentLogSummary[]>({
     baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
-    endpoint: ENDPOINT.getDocumentLogsByTitle(title),
-    next: {revalidate: CACHE.time.basicRevalidate, tags: [CACHE.tag.getDocumentLogsByTitle(title)]},
+    endpoint: ENDPOINT.getDocumentLogsByUUID(uuid),
+    next: {revalidate: CACHE.time.basicRevalidate, tags: [CACHE.tag.getDocumentLogsByUUID(uuid)]},
   });
 
   return logs.sort((a: WikiDocumentLogSummary, b: WikiDocumentLogSummary) =>
@@ -79,8 +79,6 @@ export const getRecentlyDocuments = async () => {
     endpoint: ENDPOINT.getRecentlyDocuments,
     next: {revalidate: CACHE.time.basicRevalidate, tags: [CACHE.tag.getRecentlyDocuments]},
   });
-
-  console.log(documents);
 
   return documents;
 };

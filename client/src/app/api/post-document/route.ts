@@ -16,7 +16,7 @@ const postDocument = async (document: PostDocumentContent) => {
   });
 
   revalidateTag(CACHE.tag.getRecentlyDocuments);
-  revalidateTag(CACHE.tag.getDocumentLogsByTitle(document.title));
+  revalidateTag(CACHE.tag.getDocumentLogsByUUID(document.uuid));
   return response;
 };
 

@@ -1,6 +1,6 @@
 import type {UUIDLogParams, UUIDParams} from '@type/PageParams.type';
 import {LogContent} from './LogContent';
-import {getDocumentLogsByTitle} from '@apis/document';
+import {getDocumentLogsByUUID} from '@apis/document';
 import {Metadata} from 'next';
 
 export async function generateMetadata({params}: UUIDLogParams): Promise<Metadata> {
@@ -22,7 +22,7 @@ const Page = async ({params}: UUIDParams) => {
   const {uuid} = await params;
   // TODO: 단일 글 수정 로그 불러오기 api가 title -> uuid로 완성된 뒤에 작업가능
   // 이 api 응답에 문서 제목을 추가로 달아줬으면 합니다.
-  const documentLogs = await getDocumentLogsByTitle(uuid);
+  const documentLogs = await getDocumentLogsByUUID(uuid);
   const title = '';
 
   return (

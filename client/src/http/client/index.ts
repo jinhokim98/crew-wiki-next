@@ -39,6 +39,14 @@ export const requestPutClient = async <T>({headers = {}, ...args}: ClientHttpMet
   return response.data;
 };
 
+export const requestPutClientWithoutResponse = async ({headers = {}, ...args}: ClientHttpMethodArgs): Promise<void> => {
+  await requestWithoutResponse({
+    ...args,
+    method: 'PUT',
+    headers,
+  });
+};
+
 const prepareRequest = ({baseUrl, method, endpoint, headers, body, queryParams}: ClientHttpArgs) => {
   let url = `${baseUrl}${endpoint}`;
   if (queryParams) url += `?${objectToQueryString(queryParams)}`;
@@ -71,6 +79,11 @@ const request = async <T>(args: ClientHttpArgs) => {
 
   const data: T = await response!.json();
   return data;
+};
+
+const requestWithoutResponse = async (args: ClientHttpArgs) => {
+  const {url, requestInit} = prepareRequest(args);
+  await executeRequest({url, requestInit});
 };
 
 const executeRequest = async ({url, requestInit}: FetchType) => {

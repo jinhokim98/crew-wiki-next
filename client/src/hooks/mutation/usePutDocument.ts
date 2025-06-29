@@ -13,7 +13,6 @@ export const usePutDocument = () => {
   const {trackDocumentUpdate} = useAmplitude();
 
   const putDocument = async (document: PostDocumentContent) => {
-    console.log(document);
     const editDocument = await requestPutServer<WikiDocument>({
       baseUrl: process.env.NEXT_PUBLIC_BASE_URL,
       endpoint: '/api/put-document',
