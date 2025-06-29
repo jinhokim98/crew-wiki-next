@@ -18,12 +18,15 @@ const EditPage = ({document}: EditPageProps) => {
   const reset = useDocument(action => action.reset);
 
   useEffect(() => {
-    setInit({
-      title: document.title,
-      writer: document.writer,
-      contents: document.contents,
-      images: [],
-    });
+    setInit(
+      {
+        title: document.title,
+        writer: document.writer,
+        contents: document.contents,
+        images: [],
+      },
+      document.documentUUID,
+    );
 
     return () => reset();
   }, [document, setInit, reset]);

@@ -31,9 +31,9 @@ const Page = async ({params}: UUIDLogParams) => {
 
   return (
     <section className="flex w-full flex-col items-center gap-6">
-      <MobileDocumentHeader title={document.title} />
+      <MobileDocumentHeader title={document.title} uuid={uuid} />
       <div className="flex h-fit w-full flex-col gap-6 rounded-xl border border-solid border-primary-100 bg-white p-8 max-[768px]:gap-2 max-[768px]:p-4">
-        <DocumentHeader title={title} />
+        <DocumentHeader title={title} uuid={uuid} />
         <DocumentContents contents={contents} />
       </div>
       <DocumentFooter generateTime={document.generateTime} />

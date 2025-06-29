@@ -8,30 +8,30 @@ import markdownToHtml from '@utils/markdownToHtml';
 import {Metadata} from 'next';
 import {notFound} from 'next/navigation';
 
-export const dynamicParams = true;
+// export const dynamicParams = true;
 
-export async function generateStaticParams() {
-  const documents = await getRecentlyDocuments();
+// export async function generateStaticParams() {
+//   const documents = await getRecentlyDocuments();
 
-  return documents.map(({documentUUID}) => ({uuid: documentUUID}));
-}
+//   return documents.map(({documentUUID}) => ({uuid: documentUUID}));
+// }
 
-export async function generateMetadata({params}: UUIDParams): Promise<Metadata> {
-  const {uuid} = await params;
-  // TODO uuid로 문서 제목을 요청하는 api 필요
-  // const documentTitle = decodeURI(uuid);
-  const documentTitle = uuid;
+// export async function generateMetadata({params}: UUIDParams): Promise<Metadata> {
+//   const {uuid} = await params;
+//   // TODO uuid로 문서 제목을 요청하는 api 필요
+//   // const documentTitle = decodeURI(uuid);
+//   const documentTitle = uuid;
 
-  return {
-    title: documentTitle,
-    description: `${documentTitle}에 대한 정보(논란)를 확인하세요.`,
-    openGraph: {
-      title: `크루위키 ${documentTitle}의 문서`,
-      description: `${documentTitle}에 대한 정보(논란)를 확인하세요.`,
-      images: `${process.env.NEXT_PUBLIC_CDN_DOMAIN}/images/daemoon.png`,
-    },
-  };
-}
+//   return {
+//     title: documentTitle,
+//     description: `${documentTitle}에 대한 정보(논란)를 확인하세요.`,
+//     openGraph: {
+//       title: `크루위키 ${documentTitle}의 문서`,
+//       description: `${documentTitle}에 대한 정보(논란)를 확인하세요.`,
+//       images: `${process.env.NEXT_PUBLIC_CDN_DOMAIN}/images/daemoon.png`,
+//     },
+//   };
+// }
 
 // next.js v15부터 params를 받기 위해 await를 사용해야 함
 // https://nextjs.org/docs/messages/sync-dynamic-apis
@@ -47,9 +47,9 @@ const DocumentPage = async ({params}: UUIDParams) => {
 
   return (
     <div className="flex w-full flex-col gap-6 max-[768px]:gap-2">
-      <MobileDocumentHeader title={document.title} />
+      <MobileDocumentHeader title={document.title} uuid={document.documentUUID} />
       <section className="flex h-fit min-h-[864px] w-full flex-col gap-6 rounded-xl border border-solid border-primary-100 bg-white p-8 max-md:gap-2 max-md:p-4 max-[768px]:gap-2">
-        <DocumentHeader title={document.title} />
+        <DocumentHeader title={document.title} uuid={document.documentUUID} />
         <DocumentContents contents={contents} />
       </section>
       <DocumentFooter generateTime={document.generateTime} />

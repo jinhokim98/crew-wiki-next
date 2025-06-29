@@ -1,30 +1,42 @@
 'use client';
 
 import {objectToQueryString} from '../common';
-import {ClientCreateRequestInitProps, ClientHttpArgs, ClientHttpMethodArgs, FetchType} from '@type/http.type';
+import {
+  ClientCreateRequestInitProps,
+  ClientHttpArgs,
+  ClientHttpMethodArgs,
+  FetchType,
+  ResponseType,
+} from '@type/http.type';
 
 export const requestGetClient = async <T>({headers = {}, ...args}: ClientHttpMethodArgs): Promise<T> => {
-  return await request<T>({
+  const response = await request<ResponseType<T>>({
     ...args,
     method: 'GET',
     headers,
   });
+
+  return response.data;
 };
 
 export const requestPostClient = async <T>({headers = {}, ...args}: ClientHttpMethodArgs): Promise<T> => {
-  return await request<T>({
+  const response = await request<ResponseType<T>>({
     ...args,
     method: 'POST',
     headers,
   });
+
+  return response.data;
 };
 
 export const requestPutClient = async <T>({headers = {}, ...args}: ClientHttpMethodArgs): Promise<T> => {
-  return await request<T>({
+  const response = await request<ResponseType<T>>({
     ...args,
     method: 'PUT',
     headers,
   });
+
+  return response.data;
 };
 
 const prepareRequest = ({baseUrl, method, endpoint, headers, body, queryParams}: ClientHttpArgs) => {

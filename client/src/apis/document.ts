@@ -23,7 +23,8 @@ export const getDocumentByTitle = async (title: string) => {
 
 export const getDocumentByUUID = async (uuid: string) => {
   try {
-    const docs = await requestGet<WikiDocument>({
+    const docs = await requestGetServer<WikiDocument>({
+      baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
       endpoint: `${ENDPOINT.getDocumentByUUID}/${uuid}`,
       next: {revalidate: CACHE.time.basicRevalidate, tags: [CACHE.tag.getDocumentByUUID(uuid)]},
     });
@@ -73,11 +74,13 @@ interface RecentlyDocumentsResponse {
 }
 
 export const getRecentlyDocuments = async () => {
-  const {documents} = await requestGetServer<RecentlyDocumentsResponse>({
+  const documents = await requestGetServer<RecentlyDocumentsResponse>({
     baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
     endpoint: ENDPOINT.getRecentlyDocuments,
     next: {revalidate: CACHE.time.basicRevalidate, tags: [CACHE.tag.getRecentlyDocuments]},
   });
+
+  console.log(documents);
 
   return documents;
 };

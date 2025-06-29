@@ -10,14 +10,17 @@ import {PostDocumentContent} from '@apis/document';
 import {getBytes} from '@utils/getBytes';
 import {usePostDocument} from '@hooks/mutation/usePostDocument';
 import {usePutDocument} from '@hooks/mutation/usePutDocument';
+import {URLS} from '@constants/urls';
 
 type ModeProps = {
   mode: 'post' | 'edit';
 };
 
 const RequestButton = ({mode}: ModeProps) => {
+  const documentUUID = useDocument(state => state.uuid);
   const values = useDocument(state => state.values);
   const errors = useDocument(state => state.errorMessages);
+  const router = useRouter();
 
   const requiredFields: Array<ExcludeImages> = ['title', 'writer', 'contents'];
   const canSubmit = requiredFields.every(field => values[field].trim() !== '' && errors[field] === null);
@@ -25,13 +28,14 @@ const RequestButton = ({mode}: ModeProps) => {
   const {postDocument, isPostPending} = usePostDocument();
   const {putDocument, isPutPending} = usePutDocument();
   const isPending = isPostPending || isPutPending;
+  const uuid = documentUUID ?? crypto.randomUUID();
 
   const onSubmit = async () => {
-    const newMetaList = await uploadImages({documentUUID: values.title, uploadImageMetaList: values.images});
+    const newMetaList = await uploadImages({documentUUID: uuid, uploadImageMetaList: values.images});
     const linkReplacedContents = replaceLocalUrlToS3Url(values.contents, newMetaList);
 
     const document: PostDocumentContent = {
-      uuid: '',
+      uuid,
       title: values.title,
       contents: linkReplacedContents,
       writer: values.writer,
@@ -40,6 +44,8 @@ const RequestButton = ({mode}: ModeProps) => {
 
     if (mode === 'post') postDocument(document);
     if (mode === 'edit') putDocument(document);
+
+    router.push(`${URLS.wiki}/${uuid}`);
   };
 
   return (

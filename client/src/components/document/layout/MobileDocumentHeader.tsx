@@ -4,18 +4,19 @@ import Link from 'next/link';
 
 interface MobileDocumentHeaderProps {
   title: string;
+  uuid: string;
 }
 
-const MobileDocumentHeader = ({title}: MobileDocumentHeaderProps) => {
+const MobileDocumentHeader = ({title, uuid}: MobileDocumentHeaderProps) => {
   return (
     <div className="md:hidden">
       <fieldset className="flex gap-2 max-md:w-full max-md:justify-center">
-        <Link href={`${URLS.wiki}/${title}${URLS.edit}`}>
+        <Link href={`${URLS.wiki}/${uuid}${URLS.edit}`}>
           <Button style="tertiary" size="xs">
             편집하기
           </Button>
         </Link>
-        <Link href={`${URLS.wiki}/${title}/${URLS.logs}`}>
+        <Link href={`${URLS.wiki}/${uuid}/${URLS.logs}`}>
           <Button style="tertiary" size="xs">
             편집로그
           </Button>

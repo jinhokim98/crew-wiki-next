@@ -24,13 +24,13 @@ const WikiInputField = ({className, handleSubmit}: WikiInputProps) => {
     if (value?.trim() === '') return;
 
     const submitter = (event.nativeEvent as SubmitEvent).submitter;
-    const targetTitle = submitter?.id;
+    const targetUUID = submitter?.id;
 
     // TODO: 이 부분은 키워드 검색 api가 완성되어야 작업할 수 있음
-    if (targetTitle !== 'search-icon') {
-      router.push(`${URLS.wiki}/${targetTitle}`);
+    if (targetUUID !== 'search-icon') {
+      router.push(`${URLS.wiki}/${targetUUID}`);
     } else if (titles !== undefined && titles.length !== 0) {
-      router.push(`${URLS.wiki}/${titles[0]}`);
+      router.push(`${URLS.wiki}/${titles[0].uuid}`);
     } else {
       router.push(`${URLS.wiki}/${value}`);
     }

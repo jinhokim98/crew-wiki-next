@@ -16,6 +16,7 @@ type FieldType = {
 type State = {
   values: FieldType;
   errorMessages: Record<Field, ErrorMessage>;
+  uuid: string | null;
 };
 
 type Validators = {
@@ -24,7 +25,7 @@ type Validators = {
 };
 
 type Action = {
-  setInit: (initial: FieldType) => void;
+  setInit: (initial: FieldType, uuid: string | null) => void;
   addImage: (newImage: UploadImageMeta) => void;
   onChange: (value: string, field: ExcludeImages) => void;
   onBlur: (value: string, field: ExcludeImages, list?: string[]) => void;
@@ -55,19 +56,26 @@ const initialValue = {
     contents: null,
     images: null,
   },
+  uuid: null,
 };
 
 export const useDocument = create<State & Action>((set, get) => ({
   ...initialValue,
-  setInit: initial => {
+  setInit: (initial, uuid) => {
     set({
-      values: initial,
+      values: {
+        title: initial.title,
+        writer: initial.writer,
+        contents: initial.contents,
+        images: [],
+      },
       errorMessages: {
         title: null,
         writer: null,
         contents: null,
         images: null,
       },
+      uuid,
     });
   },
 
