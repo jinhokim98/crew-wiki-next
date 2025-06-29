@@ -10,4 +10,5 @@ export const ENDPOINT = {
   getDocumentLogsByUUID: (uuid: string) => `/document/uuid/${uuid}/log`,
   getSpecificDocumentLog: (logId: number) => `/document/log/${logId}`,
   postAdminLogin: '/admin/login',
+  getPresignedUrl: '/upload',
 } as const;

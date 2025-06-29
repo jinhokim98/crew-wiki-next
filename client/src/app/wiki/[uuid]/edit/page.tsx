@@ -1,34 +1,47 @@
 'use client';
 
 import PostHeader from '@components/document/Write/PostHeader';
-import {DocumentWriteContextProvider, useDocumentWriteContext} from '@context/DocumentWriteContext';
 import TitleInputField from '@components/document/Write/TitleInputField';
 import TuiEditor from '@components/document/TuiEditor';
 import {useParams} from 'next/navigation';
 import {useGetDocumentByUUID} from '@hooks/fetch/useGetDocumentByUUID';
+import {useEffect} from 'react';
+import {useDocument} from '@store/document';
+import {WikiDocument} from '@type/Document.type';
 
-const EditPage = () => {
-  const {contentsProps} = useDocumentWriteContext();
+type EditPageProps = {
+  document: WikiDocument;
+};
+
+const EditPage = ({document}: EditPageProps) => {
+  const setInit = useDocument(action => action.setInit);
+  const reset = useDocument(action => action.reset);
+
+  useEffect(() => {
+    setInit({
+      title: document.title,
+      writer: document.writer,
+      contents: document.contents,
+      images: [],
+    });
+
+    return () => reset();
+  }, [document, setInit, reset]);
 
   return (
-    <>
-      <PostHeader />
-      <TitleInputField disabled />
-      <TuiEditor initialValue={contentsProps.initialContents} />
-    </>
+    <section className="flex h-fit w-full flex-col gap-6 rounded-xl border border-solid border-primary-100 bg-white p-8 max-[768px]:gap-3 max-[768px]:p-4">
+      <PostHeader mode="edit" />
+      <TitleInputField />
+      <TuiEditor initialValue={document.contents} />
+    </section>
   );
 };
 
 const Page = () => {
   const {uuid} = useParams();
   const {document} = useGetDocumentByUUID(uuid as string);
-  return (
-    document && (
-      <DocumentWriteContextProvider mode="edit" title={document.title} contents={document.contents}>
-        <EditPage />
-      </DocumentWriteContextProvider>
-    )
-  );
+
+  return document && <EditPage document={document} />;
 };
 
 export default Page;
