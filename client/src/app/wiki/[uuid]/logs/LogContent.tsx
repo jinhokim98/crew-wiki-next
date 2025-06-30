@@ -4,23 +4,23 @@ import timeConverter from '@utils/TimeConverter';
 import Link from 'next/link';
 
 type LogContentProps = {
-  title: string;
+  uuid: string;
   summary: WikiDocumentLogSummary;
 };
 
-export const LogContent = ({title, summary}: LogContentProps) => {
+export const LogContent = ({uuid, summary}: LogContentProps) => {
   const {logId, version, generateTime, documentBytes, writer} = summary;
 
   return (
     <Link
-      href={`${URLS.wiki}/${title}/log/${logId}`}
+      href={`${URLS.wiki}/${uuid}/log/${logId}`}
       passHref
-      className="flex items-center justify-center w-full gap-2 px-2 py-4 border border-primary-100 rounded-2xl font-pretendard text-md  text-grayscale-800 md:gap-8"
+      className="text-md flex w-full items-center justify-center gap-2 rounded-2xl border border-primary-100 px-2 py-4 font-pretendard text-grayscale-800 md:gap-8"
     >
       <div className="w-10">
         <p className="w-full text-center">{version}</p>
       </div>
-      <div className="grow text-center flex justify-center">
+      <div className="flex grow justify-center text-center">
         <p className="w-[144px] text-center md:w-full">
           {timeConverter(generateTime, 'YYYY년 M월 D일 (ddd) HH:mm:ss')}
         </p>
