@@ -4,13 +4,13 @@ import DocumentFooter from '@components/document/layout/DocumentFooter';
 import DocumentHeader from '@components/document/layout/DocumentHeader';
 import MobileDocumentHeader from '@components/document/layout/MobileDocumentHeader';
 import type {UUIDLogParams} from '@type/PageParams.type';
+import {getDocumentTitleUsingUUID} from '@utils/getDocumentUsingUUIDInCache';
 import markdownToHtml from '@utils/markdownToHtml';
 import {Metadata} from 'next';
 
 export async function generateMetadata({params}: UUIDLogParams): Promise<Metadata> {
   const {uuid} = await params;
-  // TODO: uuid로 title을 가져오는 함수가 필요하다.
-  const documentTitle = decodeURI(uuid);
+  const documentTitle = await getDocumentTitleUsingUUID(uuid);
 
   return {
     title: documentTitle,
@@ -24,8 +24,6 @@ export async function generateMetadata({params}: UUIDLogParams): Promise<Metadat
 
 const Page = async ({params}: UUIDLogParams) => {
   const {uuid, logId} = await params;
-  // TODO: uuid로 title을 가져오는 함수가 필요하다.
-  const title = '';
   const document = await getSpecificDocumentLog(Number(logId));
   const contents = await markdownToHtml(document.contents);
 
@@ -33,7 +31,7 @@ const Page = async ({params}: UUIDLogParams) => {
     <section className="flex w-full flex-col items-center gap-6">
       <MobileDocumentHeader title={document.title} uuid={uuid} />
       <div className="flex h-fit w-full flex-col gap-6 rounded-xl border border-solid border-primary-100 bg-white p-8 max-[768px]:gap-2 max-[768px]:p-4">
-        <DocumentHeader title={title} uuid={uuid} />
+        <DocumentHeader title={document.title} uuid={uuid} />
         <DocumentContents contents={contents} />
       </div>
       <DocumentFooter generateTime={document.generateTime} />

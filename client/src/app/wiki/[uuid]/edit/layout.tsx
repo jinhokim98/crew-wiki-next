@@ -1,9 +1,10 @@
-import {TitleParams} from '@type/PageParams.type';
+import {UUIDParams} from '@type/PageParams.type';
+import {getDocumentTitleUsingUUID} from '@utils/getDocumentUsingUUIDInCache';
 import {Metadata} from 'next';
 
-export async function generateMetadata({params}: TitleParams): Promise<Metadata> {
-  const {title} = await params;
-  const documentTitle = decodeURI(title);
+export async function generateMetadata({params}: UUIDParams): Promise<Metadata> {
+  const {uuid} = await params;
+  const documentTitle = await getDocumentTitleUsingUUID(uuid);
 
   return {
     title: `${documentTitle} 편집하기`,

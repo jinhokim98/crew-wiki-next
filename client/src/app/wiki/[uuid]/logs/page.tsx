@@ -2,11 +2,11 @@ import type {UUIDLogParams, UUIDParams} from '@type/PageParams.type';
 import {LogContent} from './LogContent';
 import {getDocumentLogsByUUID} from '@apis/document';
 import {Metadata} from 'next';
+import {getDocumentsMap} from '@utils/documentCache';
 
 export async function generateMetadata({params}: UUIDLogParams): Promise<Metadata> {
   const {uuid} = await params;
-  // TODO: uuid -> title을 불러오는 api 필요
-  const documentTitle = uuid;
+  const documentTitle = (await getDocumentsMap()).get(uuid)?.title;
 
   return {
     title: `${documentTitle} 편집로그`,
@@ -20,10 +20,7 @@ export async function generateMetadata({params}: UUIDLogParams): Promise<Metadat
 
 const Page = async ({params}: UUIDParams) => {
   const {uuid} = await params;
-  // TODO: 단일 글 수정 로그 불러오기 api가 title -> uuid로 완성된 뒤에 작업가능
-  // 이 api 응답에 문서 제목을 추가로 달아줬으면 합니다.
   const documentLogs = await getDocumentLogsByUUID(uuid);
-  const title = '';
 
   return (
     <div className="flex w-full flex-col gap-4">
@@ -42,7 +39,7 @@ const Page = async ({params}: UUIDParams) => {
         </div>
       </div>
       <div className="flex flex-col gap-4">
-        {documentLogs?.map(docs => <LogContent key={docs.logId} title={title as string} summary={docs} />)}
+        {documentLogs?.map(docs => <LogContent key={docs.logId} uuid={uuid as string} summary={docs} />)}
       </div>
     </div>
   );
