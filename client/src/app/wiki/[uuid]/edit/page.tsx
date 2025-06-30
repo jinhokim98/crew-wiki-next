@@ -42,7 +42,7 @@ const EditPage = ({document}: EditPageProps) => {
 
 const Page = () => {
   const {uuid} = useParams();
-  const {document} = useGetDocumentByUUID(uuid as string);
+  const {document} = useGetDocumentByUUID(uuid as string); // 최신의 데이터를 불러와야하기 때문에 캐시 데이터 사용하지 않음.
 
   return document && <EditPage document={document} />;
 };
