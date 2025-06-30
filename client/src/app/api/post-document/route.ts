@@ -7,6 +7,7 @@ import {WikiDocument} from '@type/Document.type';
 import {requestPostServer} from '@http/server';
 import {revalidateTag} from 'next/cache';
 import {NextRequest, NextResponse} from 'next/server';
+import {clearDocumentsCache} from '@utils/documentCache';
 
 const postDocument = async (document: PostDocumentContent) => {
   const response = await requestPostServer<WikiDocument>({
@@ -15,8 +16,10 @@ const postDocument = async (document: PostDocumentContent) => {
     body: document,
   });
 
+  revalidateTag(CACHE.tag.getAllDocuments);
   revalidateTag(CACHE.tag.getRecentlyDocuments);
   revalidateTag(CACHE.tag.getDocumentLogsByUUID(document.uuid));
+  clearDocumentsCache();
   return response;
 };
 
