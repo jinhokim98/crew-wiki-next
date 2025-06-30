@@ -64,8 +64,14 @@ export const SortOptions = {
     label: SORT_OPTIONS.views.label,
   },
   edits: {
-    label: SORT_OPTIONS.edits.label
+    label: SORT_OPTIONS.edits.label,
   },
-}
+};
 
 export type SortType = keyof typeof SortOptions;
+
+export type WikiDocumentExpand = Omit<WikiDocument, 'documentUUID'> & {
+  uuid: string;
+  id: number;
+  documentBytes: number;
+};
