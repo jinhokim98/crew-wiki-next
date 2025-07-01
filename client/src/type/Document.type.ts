@@ -38,13 +38,6 @@ export interface UploadImageMeta {
   s3URL: string;
 }
 
-export interface RecentlyDocument {
-  documentId: number;
-  documentUUID: string;
-  title: string;
-  generateTime: string;
-}
-
 export interface PopularDocument {
   id: number;
   title: string;
@@ -75,3 +68,11 @@ export type WikiDocumentExpand = Omit<WikiDocument, 'documentUUID'> & {
   id: number;
   documentBytes: number;
 };
+
+export interface PostDocumentContent {
+  title: string;
+  contents: string;
+  writer: string;
+  documentBytes: number;
+  uuid: string;
+}
