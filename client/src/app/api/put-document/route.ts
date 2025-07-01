@@ -8,21 +8,20 @@ import {requestPutServer} from '@http/server';
 import {NextRequest, NextResponse} from 'next/server';
 import {revalidateTag} from 'next/cache';
 import {CACHE} from '@constants/cache';
+import {clearDocumentsCache} from '@utils/documentCache';
 
 const putDocument = async (document: PostDocumentContent) => {
   const response = await requestPutServer<WikiDocument>({
     baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
-    endpoint: `${ENDPOINT.updateDocument}/${document.title}`,
-    body: {
-      writer: document.writer,
-      contents: document.contents,
-      documentBytes: document.documentBytes,
-    },
+    endpoint: ENDPOINT.updateDocument,
+    body: document,
   });
 
+  revalidateTag(CACHE.tag.getAllDocuments);
   revalidateTag(CACHE.tag.getRecentlyDocuments);
-  revalidateTag(CACHE.tag.getDocumentByTitle(document.title));
-  revalidateTag(CACHE.tag.getDocumentLogsByTitle(document.title));
+  revalidateTag(CACHE.tag.getDocumentByUUID(document.uuid));
+  revalidateTag(CACHE.tag.getDocumentLogsByUUID(document.uuid));
+  clearDocumentsCache();
 
   return response;
 };

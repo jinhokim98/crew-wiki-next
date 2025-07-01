@@ -6,8 +6,13 @@ import {useFetch} from '@hooks/useFetch';
 import {requestGetClient} from '@http/client';
 import {ENDPOINT} from '@constants/endpoint';
 
+export type SearchDocumentResponse = {
+  title: string;
+  uuid: string;
+};
+
 const getSearchDocument = async (query: string) => {
-  const response = await requestGetClient<string[]>({
+  const response = await requestGetClient<SearchDocumentResponse[]>({
     baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
     endpoint: ENDPOINT.getDocumentSearch,
     queryParams: {

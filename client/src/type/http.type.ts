@@ -33,3 +33,13 @@ export type FetchType = {
   url: string;
   requestInit: RequestInit;
 };
+
+export type ResponseType<T> = {
+  data: T;
+  code: string;
+};
+
+export type ErrorType = {
+  code: string;
+  message: string;
+};

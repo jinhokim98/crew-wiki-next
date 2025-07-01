@@ -14,18 +14,20 @@ const useAmplitude = () => {
   }, []);
 
   const trackDocumentCreate = useCallback(
-    (title: string) => {
+    (title: string, documentUUID: string) => {
       trackEvent('문서 작성', {
         title,
+        documentUUID,
       });
     },
     [trackEvent],
   );
 
   const trackDocumentUpdate = useCallback(
-    (title: string) => {
+    (title: string, documentUUID: string) => {
       trackEvent('문서 수정', {
         title,
+        documentUUID,
       });
     },
     [trackEvent],

@@ -1,31 +1,43 @@
 'use server';
 
 import {objectToQueryString} from '@http/common';
-import {FetchType, ServerHttpArgs, ServerHttpMethodArgs, ServerCreateRequestInitProps} from '@type/http.type';
+import {
+  FetchType,
+  ServerHttpArgs,
+  ServerHttpMethodArgs,
+  ServerCreateRequestInitProps,
+  ResponseType,
+} from '@type/http.type';
 
 export const requestGetServer = async <T>({headers = {}, ...args}: ServerHttpMethodArgs): Promise<T> => {
-  return await request<T>({
+  const response = await request<ResponseType<T>>({
     ...args,
     method: 'GET',
     headers,
     cache: args.cache ?? 'force-cache',
   });
+
+  return response.data;
 };
 
 export const requestPostServer = async <T>({headers = {}, ...args}: ServerHttpMethodArgs): Promise<T> => {
-  return await request<T>({
+  const response = await request<ResponseType<T>>({
     ...args,
     method: 'POST',
     headers,
   });
+
+  return response.data;
 };
 
 export const requestPutServer = async <T>({headers = {}, ...args}: ServerHttpMethodArgs): Promise<T> => {
-  return await request<T>({
+  const response = await request<ResponseType<T>>({
     ...args,
     method: 'PUT',
     headers,
   });
+
+  return response.data;
 };
 
 const prepareRequest = ({baseUrl, method, endpoint, headers, body, queryParams, next, cache}: ServerHttpArgs) => {

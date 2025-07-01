@@ -9,8 +9,8 @@ export const useRandomButton = () => {
   const router = useRouter();
 
   const goRandomDocument = async () => {
-    const randomTitle = await getRandomDocument();
-    router.push(`${URLS.wiki}/${randomTitle}`);
+    const randomUUID = await getRandomDocument();
+    router.push(`${URLS.wiki}/${randomUUID}`);
   };
 
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 768);

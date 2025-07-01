@@ -4,7 +4,7 @@ export const URLS = {
   docs: ':title',
   edit: '/edit',
   post: '/post',
-  daemoon: '대문',
+  daemoon: '30a6c25d-4b88-11f0-99c4-0a270fc3fae1',
   logs: 'logs',
   specificLog: 'log/:logId',
 };

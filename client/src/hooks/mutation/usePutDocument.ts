@@ -25,8 +25,8 @@ export const usePutDocument = () => {
   const {mutate, isPending} = useMutation<PostDocumentContent, WikiDocument>({
     mutationFn: putDocument,
     onSuccess: document => {
-      trackDocumentUpdate(document.title);
-      router.push(`${URLS.wiki}/${document.title}`);
+      trackDocumentUpdate(document.title, document.documentUUID);
+      router.push(`${URLS.wiki}/${document.documentUUID}`);
       router.refresh();
     },
   });

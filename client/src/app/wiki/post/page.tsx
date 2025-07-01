@@ -14,12 +14,15 @@ const Page = () => {
   const reset = useDocument(action => action.reset);
 
   useEffect(() => {
-    setInit({
-      title: '',
-      writer: '',
-      contents: initialValue,
-      images: [],
-    });
+    setInit(
+      {
+        title: '',
+        writer: '',
+        contents: initialValue,
+        images: [],
+      },
+      null,
+    );
 
     return () => reset();
   }, [setInit, initialValue, reset]);

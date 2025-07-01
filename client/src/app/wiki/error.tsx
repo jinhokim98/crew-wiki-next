@@ -6,7 +6,7 @@ import {URLS} from '@constants/urls';
 import {useParams, useRouter} from 'next/navigation';
 
 const Error = () => {
-  const {title} = useParams();
+  const {uuid} = useParams();
   const router = useRouter();
 
   const goPostPage = () => {
@@ -14,9 +14,9 @@ const Error = () => {
   };
 
   return (
-    <div className="flex flex-col gap-6 w-full h-fit min-h-[864px] bg-white border-primary-100 border-solid border rounded-xl p-8 max-md:p-4">
-      <header className="max-[768px]:gap-4 flex justify-between w-full">
-        <DocumentTitle title={decodeURI(title as string)} />
+    <div className="flex h-fit min-h-[864px] w-full flex-col gap-6 rounded-xl border border-solid border-primary-100 bg-white p-8 max-md:p-4">
+      <header className="flex w-full justify-between max-[768px]:gap-4">
+        <DocumentTitle title={uuid as string} />
         <fieldset className="flex gap-2">
           <Button style="primary" size="xs" onClick={goPostPage}>
             작성하기

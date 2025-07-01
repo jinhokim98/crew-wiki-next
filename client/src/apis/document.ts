@@ -2,8 +2,15 @@
 
 import {CACHE} from '@constants/cache';
 import {ENDPOINT} from '@constants/endpoint';
-import {RecentlyDocument, WikiDocument, WikiDocumentLogDetail, WikiDocumentLogSummary} from '@type/Document.type';
+import {
+  RecentlyDocument,
+  WikiDocument,
+  WikiDocumentExpand,
+  WikiDocumentLogDetail,
+  WikiDocumentLogSummary,
+} from '@type/Document.type';
 import {requestGetServer} from '@http/server';
+import {PaginationResponse} from '@type/General.type';
 
 export const getDocumentByTitle = async (title: string) => {
   try {
@@ -21,11 +28,27 @@ export const getDocumentByTitle = async (title: string) => {
   }
 };
 
-export const getDocumentLogsByTitle = async (title: string) => {
+export const getDocumentByUUID = async (uuid: string) => {
+  try {
+    const docs = await requestGetServer<WikiDocument>({
+      baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
+      endpoint: `${ENDPOINT.getDocumentByUUID}/${uuid}`,
+      next: {revalidate: CACHE.time.basicRevalidate, tags: [CACHE.tag.getDocumentByUUID(uuid)]},
+    });
+
+    return docs;
+  } catch (error) {
+    if (error instanceof Error) {
+      return null;
+    }
+  }
+};
+
+export const getDocumentLogsByUUID = async (uuid: string) => {
   const logs = await requestGetServer<WikiDocumentLogSummary[]>({
     baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
-    endpoint: ENDPOINT.getDocumentLogsByTitle(title),
-    next: {revalidate: CACHE.time.basicRevalidate, tags: [CACHE.tag.getDocumentLogsByTitle(title)]},
+    endpoint: ENDPOINT.getDocumentLogsByUUID(uuid),
+    next: {revalidate: CACHE.time.basicRevalidate, tags: [CACHE.tag.getDocumentLogsByUUID(uuid)]},
   });
 
   return logs.sort((a: WikiDocumentLogSummary, b: WikiDocumentLogSummary) =>
@@ -50,7 +73,7 @@ export const getRandomDocument = async () => {
     cache: 'no-cache',
   });
 
-  return docs.title;
+  return docs.documentUUID;
 };
 
 interface RecentlyDocumentsResponse {
@@ -58,7 +81,7 @@ interface RecentlyDocumentsResponse {
 }
 
 export const getRecentlyDocuments = async () => {
-  const {documents} = await requestGetServer<RecentlyDocumentsResponse>({
+  const documents = await requestGetServer<RecentlyDocumentsResponse>({
     baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
     endpoint: ENDPOINT.getRecentlyDocuments,
     next: {revalidate: CACHE.time.basicRevalidate, tags: [CACHE.tag.getRecentlyDocuments]},
@@ -87,4 +110,20 @@ export const searchDocument = async (referQuery: string) => {
   });
 
   return titles;
+};
+
+export const getAllDocuments = async () => {
+  const totalSize = (await searchDocument('')).length; // 전체 문서의 길이를 알기 위해
+
+  const documents = await requestGetServer<PaginationResponse<WikiDocumentExpand[]>>({
+    baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
+    endpoint: ENDPOINT.getAllDocuments,
+    queryParams: {
+      pageNumber: 0,
+      pageSize: totalSize,
+    },
+    next: {revalidate: CACHE.time.basicRevalidate, tags: [CACHE.tag.getAllDocuments]},
+  });
+
+  return documents.data;
 };
