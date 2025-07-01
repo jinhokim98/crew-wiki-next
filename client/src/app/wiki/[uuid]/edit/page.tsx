@@ -4,7 +4,7 @@ import PostHeader from '@components/document/Write/PostHeader';
 import TitleInputField from '@components/document/Write/TitleInputField';
 import TuiEditor from '@components/document/TuiEditor';
 import {useParams} from 'next/navigation';
-import {useGetDocumentByTitle} from '@hooks/fetch/useGetDocumentByTitle';
+import {useGetDocumentByUUID} from '@hooks/fetch/useGetDocumentByUUID';
 import {useEffect} from 'react';
 import {useDocument} from '@store/document';
 import {WikiDocument} from '@type/Document.type';
@@ -18,12 +18,15 @@ const EditPage = ({document}: EditPageProps) => {
   const reset = useDocument(action => action.reset);
 
   useEffect(() => {
-    setInit({
-      title: document.title,
-      writer: document.writer,
-      contents: document.contents,
-      images: [],
-    });
+    setInit(
+      {
+        title: document.title,
+        writer: document.writer,
+        contents: document.contents,
+        images: [],
+      },
+      document.documentUUID,
+    );
 
     return () => reset();
   }, [document, setInit, reset]);
@@ -38,8 +41,8 @@ const EditPage = ({document}: EditPageProps) => {
 };
 
 const Page = () => {
-  const {title} = useParams();
-  const {document} = useGetDocumentByTitle(title as string);
+  const {uuid} = useParams();
+  const {document} = useGetDocumentByUUID(uuid as string); // 최신의 데이터를 불러와야하기 때문에 캐시 데이터 사용하지 않음.
 
   return document && <EditPage document={document} />;
 };

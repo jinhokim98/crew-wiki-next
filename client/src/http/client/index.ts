@@ -1,26 +1,46 @@
 'use client';
 
 import {objectToQueryString} from '../common';
-import {ClientCreateRequestInitProps, ClientHttpArgs, ClientHttpMethodArgs, FetchType} from '@type/http.type';
+import {
+  ClientCreateRequestInitProps,
+  ClientHttpArgs,
+  ClientHttpMethodArgs,
+  FetchType,
+  ResponseType,
+} from '@type/http.type';
 
 export const requestGetClient = async <T>({headers = {}, ...args}: ClientHttpMethodArgs): Promise<T> => {
-  return await request<T>({
+  const response = await request<ResponseType<T>>({
     ...args,
     method: 'GET',
     headers,
   });
+
+  return response.data;
 };
 
 export const requestPostClient = async <T>({headers = {}, ...args}: ClientHttpMethodArgs): Promise<T> => {
-  return await request<T>({
+  const response = await request<ResponseType<T>>({
     ...args,
     method: 'POST',
     headers,
   });
+
+  return response.data;
 };
 
 export const requestPutClient = async <T>({headers = {}, ...args}: ClientHttpMethodArgs): Promise<T> => {
-  return await request<T>({
+  const response = await request<ResponseType<T>>({
+    ...args,
+    method: 'PUT',
+    headers,
+  });
+
+  return response.data;
+};
+
+export const requestPutClientWithoutResponse = async ({headers = {}, ...args}: ClientHttpMethodArgs): Promise<void> => {
+  await requestWithoutResponse({
     ...args,
     method: 'PUT',
     headers,
@@ -59,6 +79,11 @@ const request = async <T>(args: ClientHttpArgs) => {
 
   const data: T = await response!.json();
   return data;
+};
+
+const requestWithoutResponse = async (args: ClientHttpArgs) => {
+  const {url, requestInit} = prepareRequest(args);
+  await executeRequest({url, requestInit});
 };
 
 const executeRequest = async ({url, requestInit}: FetchType) => {

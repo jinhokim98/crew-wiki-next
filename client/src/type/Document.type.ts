@@ -2,6 +2,7 @@ import {SORT_OPTIONS} from '@constants/popular';
 
 export interface WikiDocument {
   documentId: number;
+  documentUUID: string;
   title: string;
   contents: string;
   writer: string;
@@ -39,6 +40,7 @@ export interface UploadImageMeta {
 
 export interface RecentlyDocument {
   documentId: number;
+  documentUUID: string;
   title: string;
   generateTime: string;
 }
@@ -62,8 +64,14 @@ export const SortOptions = {
     label: SORT_OPTIONS.views.label,
   },
   edits: {
-    label: SORT_OPTIONS.edits.label
+    label: SORT_OPTIONS.edits.label,
   },
-}
+};
 
 export type SortType = keyof typeof SortOptions;
+
+export type WikiDocumentExpand = Omit<WikiDocument, 'documentUUID'> & {
+  uuid: string;
+  id: number;
+  documentBytes: number;
+};

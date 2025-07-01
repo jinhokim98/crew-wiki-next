@@ -1,9 +1,11 @@
 'use client';
 
+import {SearchDocumentResponse} from '@hooks/fetch/useSearchDocumentByQuery';
+
 interface RelativeSearchTermsProps {
   style?: React.CSSProperties;
   show?: boolean;
-  searchTerms: string[];
+  searchTerms: SearchDocumentResponse[];
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }
 
@@ -15,15 +17,16 @@ const RelativeSearchTerms = ({
 }: RelativeSearchTermsProps) => {
   return (
     show && (
-      <aside style={style} className="absolute rounded-xl shadow-2xl px-2 py-2 left-0 top-12 w-full bg-white">
-        {searchTerms.map((search, index) => (
+      <aside style={style} className="absolute left-0 top-12 w-full rounded-xl bg-white px-2 py-2 shadow-2xl">
+        {searchTerms.map(({title, uuid}) => (
           <button
-            id={search}
+            id={uuid}
+            data-title={title}
             onClick={onClick}
-            className="w-full px-2 py-2 hover:bg-primary-50 rounded-lg cursor-pointer text-left font-pretendard text-base font-normal text-grayscale-800"
-            key={index}
+            className="w-full cursor-pointer rounded-lg px-2 py-2 text-left font-pretendard text-base font-normal text-grayscale-800 hover:bg-primary-50"
+            key={uuid}
           >
-            {search}
+            {title}
           </button>
         ))}
       </aside>
