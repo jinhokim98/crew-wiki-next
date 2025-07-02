@@ -11,7 +11,7 @@ import {
 } from '@type/Document.type';
 import {requestGetServer, requestPostServer, requestPutServer} from '@http/server';
 import {PaginationParams, PaginationResponse} from '@type/General.type';
-import {allDocumentsParams, recentlyParams} from '@constants/params';
+import {allDocumentsParams, documentLogsParams, recentlyParams} from '@constants/params';
 
 export const getDocumentsServerWithPagination = async (params: PaginationParams) => {
   const response = await requestGetServer<PaginationResponse<WikiDocumentExpand[]>>({
@@ -57,15 +57,14 @@ export const getDocumentByUUIDServer = async (uuid: string) => {
 };
 
 export const getDocumentLogsByUUIDServer = async (uuid: string) => {
-  const logs = await requestGetServer<WikiDocumentLogSummary[]>({
+  const response = await requestGetServer<PaginationResponse<WikiDocumentLogSummary[]>>({
     baseUrl: process.env.NEXT_PUBLIC_BACKEND_SERVER_BASE_URL,
     endpoint: ENDPOINT.getDocumentLogsByUUID(uuid),
+    queryParams: documentLogsParams,
     next: {revalidate: CACHE.time.basicRevalidate, tags: [CACHE.tag.getDocumentLogsByUUID(uuid)]},
   });
 
-  return logs.sort((a: WikiDocumentLogSummary, b: WikiDocumentLogSummary) =>
-    a.generateTime <= b.generateTime ? 1 : -1,
-  );
+  return response;
 };
 
 export const getSpecificDocumentLogServer = async (logId: number) => {
