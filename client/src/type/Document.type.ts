@@ -17,11 +17,12 @@ export interface WriteDocumentContent {
 }
 
 export interface WikiDocumentLogSummary {
-  documentBytes: number;
-  generateTime: string;
-  logId: number;
+  id: number;
+  title: string;
   version: number;
   writer: string;
+  documentBytes: number;
+  generateTime: string;
 }
 
 export interface WikiDocumentLogDetail {

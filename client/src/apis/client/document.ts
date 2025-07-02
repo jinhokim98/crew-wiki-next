@@ -2,7 +2,8 @@
 
 import {ENDPOINT} from '@constants/endpoint';
 import {requestGetClient, requestPostClient, requestPutClient} from '@http/client';
-import {PostDocumentContent, WikiDocument} from '@type/Document.type';
+import {PostDocumentContent, WikiDocument, WikiDocumentLogSummary} from '@type/Document.type';
+import {PaginationParams, PaginationResponse} from '@type/General.type';
 
 export const getDocumentByTitleClient = async (title: string) => {
   const response = await requestGetClient<WikiDocument>({
@@ -43,6 +44,16 @@ export const getSearchDocumentClient = async (query: string) => {
     queryParams: {
       keyWord: query,
     },
+  });
+
+  return response;
+};
+
+export const getDocumentLogsByUUIDClient = async (uuid: string, params: PaginationParams) => {
+  const response = await requestGetClient<PaginationResponse<WikiDocumentLogSummary[]>>({
+    baseUrl: process.env.NEXT_PUBLIC_BACKEND_SERVER_BASE_URL,
+    endpoint: ENDPOINT.getDocumentLogsByUUID(uuid),
+    queryParams: params,
   });
 
   return response;

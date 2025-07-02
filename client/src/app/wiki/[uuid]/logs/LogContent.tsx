@@ -9,11 +9,11 @@ type LogContentProps = {
 };
 
 export const LogContent = ({uuid, summary}: LogContentProps) => {
-  const {logId, version, generateTime, documentBytes, writer} = summary;
+  const {id, version, generateTime, documentBytes, writer} = summary;
 
   return (
     <Link
-      href={`${URLS.wiki}/${uuid}/log/${logId}`}
+      href={`${URLS.wiki}/${uuid}/log/${id}`}
       passHref
       className="text-md flex w-full items-center justify-center gap-2 rounded-2xl border border-primary-100 px-2 py-4 font-pretendard text-grayscale-800 md:gap-8"
     >
