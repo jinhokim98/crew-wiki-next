@@ -13,3 +13,10 @@ export const allDocumentsParams: PaginationParams = {
   sort: 'generateTime',
   sortDirection: 'ASC',
 };
+
+export const documentLogsParams: PaginationParams = {
+  pageNumber: 0,
+  pageSize: 10,
+  sort: 'id',
+  sortDirection: 'DESC',
+};
