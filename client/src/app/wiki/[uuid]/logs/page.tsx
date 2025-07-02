@@ -1,8 +1,8 @@
 import type {UUIDLogParams, UUIDParams} from '@type/PageParams.type';
-import {LogContent} from './LogContent';
 import {Metadata} from 'next';
 import {getDocumentLogsByUUIDServer} from '@apis/server/document';
 import {getDocumentTitleUsingUUID} from '@utils/getDocumentUsingUUIDInCache';
+import {LogList} from './LogList';
 
 export async function generateMetadata({params}: UUIDLogParams): Promise<Metadata> {
   const {uuid} = await params;
@@ -20,7 +20,7 @@ export async function generateMetadata({params}: UUIDLogParams): Promise<Metadat
 
 const Page = async ({params}: UUIDParams) => {
   const {uuid} = await params;
-  const documentLogs = await getDocumentLogsByUUIDServer(uuid);
+  const response = await getDocumentLogsByUUIDServer(uuid);
 
   return (
     <div className="flex w-full flex-col gap-4">
@@ -38,9 +38,7 @@ const Page = async ({params}: UUIDParams) => {
           <p className="w-full text-center font-bold">편집자</p>
         </div>
       </div>
-      <div className="flex flex-col gap-4">
-        {documentLogs?.map(docs => <LogContent key={docs.logId} uuid={uuid as string} summary={docs} />)}
-      </div>
+      <LogList key={uuid} uuid={uuid} initialData={response.data} totalPage={response.totalPage} />
     </div>
   );
 };
