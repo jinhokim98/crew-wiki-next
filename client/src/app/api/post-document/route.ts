@@ -2,7 +2,7 @@
 
 import {CACHE} from '@constants/cache';
 import {PostDocumentContent} from '@type/Document.type';
-import {revalidateTag} from 'next/cache';
+import {revalidatePath, revalidateTag} from 'next/cache';
 import {NextRequest, NextResponse} from 'next/server';
 import {postDocumentServer} from '@apis/server/document';
 import {addDocumentCache} from '@utils/documentCache';
@@ -13,6 +13,7 @@ const postDocument = async (document: PostDocumentContent) => {
   revalidateTag(CACHE.tag.getAllDocuments);
   revalidateTag(CACHE.tag.getRecentlyDocuments);
   revalidateTag(CACHE.tag.getDocumentLogsByUUID(document.uuid));
+  revalidatePath(`/wiki/${document.uuid}`);
 
   await addDocumentCache({
     title: response.title,
