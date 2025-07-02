@@ -1,7 +1,7 @@
 'use client';
 
 import Input from '@components/common/Input';
-import useSearchDocumentByQuery from '@hooks/fetch/useSearchDocumentByQuery';
+import {useGetDocumentTitleList} from '@hooks/fetch/useGetDocumentTitleList';
 import {useDocument} from '@store/document';
 import {usePathname} from 'next/navigation';
 
@@ -23,7 +23,7 @@ const TitleInput = () => {
   const onChange = useDocument(action => action.onChange);
   const onBlur = useDocument(action => action.onBlur);
 
-  const {titles} = useSearchDocumentByQuery(title);
+  const {titles} = useGetDocumentTitleList();
 
   return (
     <Input
@@ -33,7 +33,7 @@ const TitleInput = () => {
       handleChangeInput={event => onChange(event.target.value, 'title')}
       maxLength={12}
       disabled={pathname.includes('edit')}
-      onBlur={event => onBlur(event.target.value, 'title', titles)}
+      onBlur={event => onBlur(event.target.value, 'title', titles ?? [])}
       invalid={error !== null}
     />
   );
