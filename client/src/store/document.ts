@@ -1,22 +1,21 @@
 import {create} from 'zustand';
-import {ErrorInfo, ErrorMessage, UploadImageMeta} from '@type/Document.type';
+import {ErrorInfo, ErrorMessage} from '@type/Document.type';
 import {validateTitleOnBlur, validateTitleOnChange} from '@utils/validation/title';
 import {validateWriterOnChange} from '@utils/validation/writer';
 
-export type Field = 'title' | 'writer' | 'contents' | 'images';
+export type Field = 'title' | 'writer' | 'contents';
 export type ExcludeImages = Exclude<Field, 'images'>;
 
 type FieldType = {
   title: string;
   writer: string;
   contents: string;
-  images: UploadImageMeta[];
 };
 
 type State = {
   values: FieldType;
   errorMessages: Record<Field, ErrorMessage>;
-  uuid: string | null;
+  uuid: string;
 };
 
 type Validators = {
@@ -26,7 +25,6 @@ type Validators = {
 
 type Action = {
   setInit: (initial: FieldType, uuid: string | null) => void;
-  addImage: (newImage: UploadImageMeta) => void;
   onChange: (value: string, field: ExcludeImages) => void;
   onBlur: (value: string, field: ExcludeImages, list?: string[]) => void;
   reset: () => void;
@@ -48,18 +46,16 @@ const initialValue = {
     title: '',
     writer: '',
     contents: '',
-    images: [],
   },
   errorMessages: {
     title: null,
     writer: null,
     contents: null,
-    images: null,
   },
-  uuid: null,
+  uuid: '',
 };
 
-export const useDocument = create<State & Action>((set, get) => ({
+export const useDocument = create<State & Action>(set => ({
   ...initialValue,
   setInit: (initial, uuid) => {
     set({
@@ -67,15 +63,13 @@ export const useDocument = create<State & Action>((set, get) => ({
         title: initial.title,
         writer: initial.writer,
         contents: initial.contents,
-        images: [],
       },
       errorMessages: {
         title: null,
         writer: null,
         contents: null,
-        images: null,
       },
-      uuid,
+      uuid: uuid ? uuid : crypto.randomUUID(),
     });
   },
 
@@ -116,15 +110,6 @@ export const useDocument = create<State & Action>((set, get) => ({
       errorMessages: {
         ...state.errorMessages,
         [field]: errorMessage,
-      },
-    }));
-  },
-
-  addImage: newImage => {
-    set(state => ({
-      values: {
-        ...state.values,
-        images: [...state.values.images, newImage],
       },
     }));
   },

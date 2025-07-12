@@ -17,7 +17,7 @@ type ModeProps = {
 };
 
 const RequestButton = ({mode}: ModeProps) => {
-  const documentUUID = useDocument(state => state.uuid);
+  const uuid = useDocument(state => state.uuid);
   const values = useDocument(state => state.values);
   const errors = useDocument(state => state.errorMessages);
   const router = useRouter();
@@ -28,7 +28,6 @@ const RequestButton = ({mode}: ModeProps) => {
   const {postDocument, isPostPending} = usePostDocument();
   const {putDocument, isPutPending} = usePutDocument();
   const isPending = isPostPending || isPutPending;
-  const uuid = documentUUID ?? crypto.randomUUID();
 
   const onSubmit = async () => {
     const newMetaList = await uploadImages({documentUUID: uuid, uploadImageMetaList: values.images});
