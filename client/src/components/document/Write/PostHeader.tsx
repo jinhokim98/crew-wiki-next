@@ -18,6 +18,7 @@ const RequestButton = ({mode}: ModeProps) => {
   const uuid = useDocument(state => state.uuid);
   const values = useDocument(state => state.values);
   const errors = useDocument(state => state.errorMessages);
+  const isImageUploadPending = useDocument(state => state.isImageUploadPending);
   const router = useRouter();
 
   const requiredFields: Array<Field> = ['title', 'writer', 'contents'];
@@ -25,7 +26,7 @@ const RequestButton = ({mode}: ModeProps) => {
 
   const {postDocument, isPostPending} = usePostDocument();
   const {putDocument, isPutPending} = usePutDocument();
-  const isPending = isPostPending || isPutPending;
+  const isPending = isPostPending || isPutPending || isImageUploadPending;
 
   const onSubmit = async () => {
     const document: PostDocumentContent = {

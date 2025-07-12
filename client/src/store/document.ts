@@ -15,6 +15,7 @@ type State = {
   values: FieldType;
   errorMessages: Record<Field, ErrorMessage>;
   uuid: string;
+  isImageUploadPending: boolean;
 };
 
 type Validators = {
@@ -27,6 +28,7 @@ type Action = {
   onChange: (value: string, field: Field) => void;
   onBlur: (value: string, field: Field, list?: string[]) => void;
   reset: () => void;
+  updateImageUploadPending: (isPending: boolean) => void;
 };
 
 const validators: Map<Field, Validators> = new Map();
@@ -40,7 +42,7 @@ validators.set('writer', {
   validateOnChange: validateWriterOnChange,
 });
 
-const initialValue = {
+const initialValue: State = {
   values: {
     title: '',
     writer: '',
@@ -52,6 +54,7 @@ const initialValue = {
     contents: null,
   },
   uuid: '',
+  isImageUploadPending: false,
 };
 
 export const useDocument = create<State & Action>(set => ({
@@ -110,6 +113,12 @@ export const useDocument = create<State & Action>(set => ({
         ...state.errorMessages,
         [field]: errorMessage,
       },
+    }));
+  },
+
+  updateImageUploadPending: (isPending: boolean) => {
+    set(() => ({
+      isImageUploadPending: isPending,
     }));
   },
 

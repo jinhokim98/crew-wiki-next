@@ -8,13 +8,11 @@ import {useCallback, useEffect, useRef} from 'react';
 import RelativeSearchTerms from '@components/common/SearchTerms/RelativeSearchTerms';
 import {useRelativeSearchTerms} from './useRelativeSearchTerms';
 import useThrottle from '@hooks/useThrottle';
-import {EditorType} from '@type/Editor.type';
+import {EditorType, HookCallback} from '@type/Editor.type';
 import {useDocument} from '@store/document';
-import {uploadImage} from '@apis/client/images';
+import {useUploadImage} from '@hooks/mutation/useUploadImage';
 
 const DynamicLoadEditor = dynamic(() => import('@toast-ui/react-editor').then(mod => mod.Editor), {ssr: false});
-
-type HookCallback = (url: string, text?: string) => void;
 
 const toolbar = [
   ['heading', 'bold', 'italic', 'strike'],
@@ -31,14 +29,10 @@ type TuiEditorProps = {
 function TuiEditor({initialValue, saveMarkdown}: TuiEditorProps) {
   const isDesktop = typeof window !== 'undefined' ? window.innerWidth >= 768 : false;
   const editorRef = useRef<EditorType | null>(null);
-
   const uuid = useDocument(state => state.uuid);
-  const onChange = useDocument(action => action.onChange);
 
-  const uploadImageAndReplaceUrl = async (file: File, callback: HookCallback) => {
-    const imageUrl = await uploadImage(uuid, file);
-    callback(imageUrl, file.name);
-  };
+  const onChange = useDocument(action => action.onChange);
+  const {uploadImageAndReplaceUrl} = useUploadImage(uuid);
 
   useEffect(() => {
     if (!editorRef.current) return;
@@ -50,9 +44,9 @@ function TuiEditor({initialValue, saveMarkdown}: TuiEditorProps) {
   const imageHandler = async (blob: File | Blob, callback: HookCallback) => {
     if (!(blob instanceof File)) {
       const fileFromBlob = new File([blob], 'blob');
-      uploadImageAndReplaceUrl(fileFromBlob, callback);
+      uploadImageAndReplaceUrl({file: fileFromBlob, callback});
     } else {
-      uploadImageAndReplaceUrl(blob, callback);
+      uploadImageAndReplaceUrl({file: blob, callback});
     }
   };
 
