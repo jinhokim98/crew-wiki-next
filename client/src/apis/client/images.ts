@@ -2,7 +2,6 @@
 
 import {ENDPOINT} from '@constants/endpoint';
 import {requestGetClient} from '@http/client';
-import {UploadImageMeta} from '@type/Document.type';
 import Resizer from 'react-image-file-resizer';
 
 type PresignedUrlResponse = {
@@ -26,34 +25,38 @@ const uploadImageToS3 = async (uploadImageKey: string, image: File) => {
   });
 };
 
-const resizeFile = (file: File) =>
-  new Promise(res => {
-    Resizer.imageFileResizer(file, 640, 640, 'JPEG', 70, 0, uri => res(uri), 'file');
+const resizeFile = (file: File): Promise<File> =>
+  new Promise((resolve, reject) => {
+    Resizer.imageFileResizer(
+      file,
+      640,
+      640,
+      'JPEG',
+      70,
+      0,
+      uri => {
+        if (uri instanceof File) {
+          resolve(uri);
+        } else {
+          reject(new Error('이미지 리사이징에 실패했습니다.'));
+        }
+      },
+      'file',
+    );
   });
 
-export type UploadImagesArgs = {
-  documentUUID: string;
-  uploadImageMetaList: UploadImageMeta[];
-};
+export async function uploadImage(documentUUID: string, imageFile: File) {
+  const randomFileName = Math.random().toString(36).substr(2, 11);
+  const resizedImage = await resizeFile(imageFile);
+  const extension = resizedImage.type.split('/')[1];
+  const uploadImageKey = `${documentUUID}/${randomFileName}.${extension}`;
 
-export async function uploadImages({documentUUID, uploadImageMetaList}: UploadImagesArgs) {
-  const newMetaList = await Promise.all(
-    uploadImageMetaList.map(async imageMeta => {
-      const randomFileName = Math.random().toString(36).substr(2, 11);
-      const resizedImage = (await resizeFile(imageMeta.file)) as File;
-      const extension = resizedImage.type.split('/')[1];
-      const uploadImageKey = `${documentUUID}/${randomFileName}.${extension}`;
+  try {
+    await uploadImageToS3(uploadImageKey, resizedImage);
+  } catch (err) {
+    console.error('이미지 업로드에 실패했습니다.', err);
+    throw new Error('이미지 업로드에 실패했습니다.');
+  }
 
-      try {
-        await uploadImageToS3(uploadImageKey, resizedImage);
-      } catch (err) {
-        console.error('S3 Upload Error:', err);
-      }
-
-      const newMeta = {...imageMeta, s3URL: `${process.env.NEXT_PUBLIC_IMAGE_CLOUDFRONT_DOMAIN}/${uploadImageKey}`};
-      return newMeta;
-    }),
-  );
-
-  return newMetaList;
+  return `${process.env.NEXT_PUBLIC_IMAGE_CLOUDFRONT_DOMAIN}/${uploadImageKey}`;
 }

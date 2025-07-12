@@ -3,9 +3,7 @@
 import Button from '@components/common/Button';
 import DocumentTitle from '@components/document/layout/DocumentTitle';
 import {useRouter} from 'next/navigation';
-import {ExcludeImages, useDocument} from '@store/document';
-import {uploadImages} from '@apis/client/images';
-import {replaceLocalUrlToS3Url} from '@utils/replaceLocalUrlToS3Url';
+import {Field, useDocument} from '@store/document';
 import {getBytes} from '@utils/getBytes';
 import {usePostDocument} from '@hooks/mutation/usePostDocument';
 import {usePutDocument} from '@hooks/mutation/usePutDocument';
@@ -22,7 +20,7 @@ const RequestButton = ({mode}: ModeProps) => {
   const errors = useDocument(state => state.errorMessages);
   const router = useRouter();
 
-  const requiredFields: Array<ExcludeImages> = ['title', 'writer', 'contents'];
+  const requiredFields: Array<Field> = ['title', 'writer', 'contents'];
   const canSubmit = requiredFields.every(field => values[field].trim() !== '' && errors[field] === null);
 
   const {postDocument, isPostPending} = usePostDocument();
@@ -30,15 +28,12 @@ const RequestButton = ({mode}: ModeProps) => {
   const isPending = isPostPending || isPutPending;
 
   const onSubmit = async () => {
-    const newMetaList = await uploadImages({documentUUID: uuid, uploadImageMetaList: values.images});
-    const linkReplacedContents = replaceLocalUrlToS3Url(values.contents, newMetaList);
-
     const document: PostDocumentContent = {
       uuid,
       title: values.title,
-      contents: linkReplacedContents,
+      contents: values.contents,
       writer: values.writer,
-      documentBytes: getBytes(linkReplacedContents),
+      documentBytes: getBytes(values.contents),
     };
 
     if (mode === 'post') postDocument(document);

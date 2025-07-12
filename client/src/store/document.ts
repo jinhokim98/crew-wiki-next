@@ -4,7 +4,6 @@ import {validateTitleOnBlur, validateTitleOnChange} from '@utils/validation/titl
 import {validateWriterOnChange} from '@utils/validation/writer';
 
 export type Field = 'title' | 'writer' | 'contents';
-export type ExcludeImages = Exclude<Field, 'images'>;
 
 type FieldType = {
   title: string;
@@ -25,8 +24,8 @@ type Validators = {
 
 type Action = {
   setInit: (initial: FieldType, uuid: string | null) => void;
-  onChange: (value: string, field: ExcludeImages) => void;
-  onBlur: (value: string, field: ExcludeImages, list?: string[]) => void;
+  onChange: (value: string, field: Field) => void;
+  onBlur: (value: string, field: Field, list?: string[]) => void;
   reset: () => void;
 };
 

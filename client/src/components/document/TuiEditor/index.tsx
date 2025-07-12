@@ -4,13 +4,13 @@ import '@toast-ui/editor/toastui-editor.css';
 
 import dynamic from 'next/dynamic';
 
-import {UploadImageMeta} from '@type/Document.type';
 import {useCallback, useEffect, useRef} from 'react';
 import RelativeSearchTerms from '@components/common/SearchTerms/RelativeSearchTerms';
 import {useRelativeSearchTerms} from './useRelativeSearchTerms';
 import useThrottle from '@hooks/useThrottle';
 import {EditorType} from '@type/Editor.type';
 import {useDocument} from '@store/document';
+import {uploadImage} from '@apis/client/images';
 
 const DynamicLoadEditor = dynamic(() => import('@toast-ui/react-editor').then(mod => mod.Editor), {ssr: false});
 
@@ -31,18 +31,13 @@ type TuiEditorProps = {
 function TuiEditor({initialValue, saveMarkdown}: TuiEditorProps) {
   const isDesktop = typeof window !== 'undefined' ? window.innerWidth >= 768 : false;
   const editorRef = useRef<EditorType | null>(null);
-  const onChange = useDocument(action => action.onChange);
-  const addImage = useDocument(action => action.addImage);
 
-  const setImageMeta = (file: File, callback: HookCallback) => {
-    const objectURL = URL.createObjectURL(file);
-    callback(objectURL, '미리보기');
-    const imageMeta: UploadImageMeta = {
-      file,
-      objectURL,
-      s3URL: '',
-    };
-    addImage(imageMeta);
+  const uuid = useDocument(state => state.uuid);
+  const onChange = useDocument(action => action.onChange);
+
+  const uploadImageAndReplaceUrl = async (file: File, callback: HookCallback) => {
+    const imageUrl = await uploadImage(uuid, file);
+    callback(imageUrl, file.name);
   };
 
   useEffect(() => {
@@ -55,9 +50,9 @@ function TuiEditor({initialValue, saveMarkdown}: TuiEditorProps) {
   const imageHandler = async (blob: File | Blob, callback: HookCallback) => {
     if (!(blob instanceof File)) {
       const fileFromBlob = new File([blob], 'blob');
-      setImageMeta(fileFromBlob, callback);
+      uploadImageAndReplaceUrl(fileFromBlob, callback);
     } else {
-      setImageMeta(blob, callback);
+      uploadImageAndReplaceUrl(blob, callback);
     }
   };
 
