@@ -19,6 +19,7 @@ export const useUploadImage = (uuid: string) => {
       callback(response, 'image');
     },
     onError: error => {
+      // TODO: 에러처리 alert 대신에 토스트를 보여주는 방식으로 변경
       alert(error);
     },
     onSettled: () => {
