@@ -17,7 +17,6 @@ const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, '..');
 
 const PACKAGE_JSON = path.join(ROOT, 'package.json');
-const LAYOUT_TSX = path.join(ROOT, 'src/app/layout.tsx');
 const RELEASE_NOTES_TMP = path.join(ROOT, '.release-notes.tmp.md');
 
 /* ------------------ helpers ------------------ */
@@ -80,23 +79,6 @@ function ensureNoOpenReleasePr() {
   }
 }
 
-/* ------------------ rebase with auto resolve ------------------ */
-function rebaseOntoMain() {
-  console.log('\n🔄 develop 브랜치를 main 기준으로 rebase 합니다');
-  run('git fetch test');
-
-  try {
-    run('git rebase test/main');
-  } catch {
-    console.log('\n⚠️ rebase 충돌 발생 → layout.tsx 자동 해결');
-
-    // rebase 기준에서 --theirs = develop
-    run(`git checkout --theirs ${LAYOUT_TSX}`);
-    run(`git add ${LAYOUT_TSX}`);
-    run('git rebase --continue');
-  }
-}
-
 /* ------------------ release notes ------------------ */
 function generateReleaseNotes(version) {
   console.log('\n📝 릴리즈 노트 생성 중...');
@@ -137,41 +119,32 @@ rl.question('다음 배포 버전을 입력해주세요 ex) X.Y.Z : ', version =
 
     console.log(`\n▶ 배포 버전: v${version}`);
 
-    /* 0. rebase */
-    rebaseOntoMain();
-
     /* 1. package.json */
     const pkg = JSON.parse(fs.readFileSync(PACKAGE_JSON, 'utf-8'));
+    if (pkg.version === version) {
+      fail(`이미 package.json version이 ${version} 입니다.`);
+    }
+
     pkg.version = version;
     fs.writeFileSync(PACKAGE_JSON, JSON.stringify(pkg, null, 2) + '\n');
 
-    /* 2. layout.tsx */
-    const layout = fs.readFileSync(LAYOUT_TSX, 'utf-8');
-    const updatedLayout = layout.replace(/data-version="[^"]*"/, `data-version="${version}"`);
-
-    if (layout === updatedLayout) {
-      fail('layout.tsx의 data-version을 변경하지 못했습니다.');
-    }
-
-    fs.writeFileSync(LAYOUT_TSX, updatedLayout);
-
-    /* 3. 변경사항 확인 */
+    /* 2. 변경 확인 */
     if (!run('git status --porcelain', true)) {
       fail('변경된 파일이 없습니다.');
     }
 
-    /* 4. commit */
-    run('git add package.json src/app/layout.tsx');
+    /* 3. commit */
+    run('git add package.json');
     run(`git commit -m "chore: release v${version}"`);
 
-    /* 5. push */
-    run('git push test develop --force-with-lease');
+    /* 4. push */
+    run('git push origin develop');
 
-    /* 6. 릴리즈 노트 */
+    /* 5. 릴리즈 노트 */
     const notes = generateReleaseNotes(version);
     fs.writeFileSync(RELEASE_NOTES_TMP, notes);
 
-    /* 7. PR 생성 */
+    /* 6. PR 생성 */
     run(
       `gh pr create \
         --repo ${FULL_REPO} \
@@ -183,7 +156,8 @@ rl.question('다음 배포 버전을 입력해주세요 ex) X.Y.Z : ', version =
 
     fs.unlinkSync(RELEASE_NOTES_TMP);
 
-    console.log('\n🎉 릴리즈 PR 생성 완료 (충돌 자동 해결 포함)');
+    console.log('\n🎉 릴리즈 PR 생성 완료 (env 버전 전략)');
+    console.log(`ℹ️ 배포 시 NEXT_PUBLIC_APP_VERSION=${version} 주입 필요`);
   } finally {
     rl.close();
   }
