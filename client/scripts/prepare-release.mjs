@@ -6,6 +6,11 @@ import readline from 'readline';
 import {execSync} from 'child_process';
 import {fileURLToPath} from 'url';
 
+/* ------------------ constants ------------------ */
+const OWNER = 'jinhokim98';
+const REPO = 'crew-wiki-next';
+const FULL_REPO = `${OWNER}/${REPO}`;
+
 /* ------------------ path utils ------------------ */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -13,11 +18,6 @@ const ROOT = path.resolve(__dirname, '..');
 
 const PACKAGE_JSON = path.join(ROOT, 'package.json');
 const LAYOUT_TSX = path.join(ROOT, 'src/app/layout.tsx');
-const TEMP_RELEASE_NOTE = path.join(ROOT, '.release-notes.tmp.md');
-
-/* ------------------ repo info ------------------ */
-const OWNER = 'jinhokim98';
-const REPO = 'crew-wiki-next';
 
 /* ------------------ helpers ------------------ */
 function run(command, silent = false) {
@@ -61,29 +61,20 @@ function ensureDevelopBranch() {
 }
 
 function ensureNoOpenReleasePr() {
-  const count = run('gh pr list --base main --head develop --state open --json number --jq "length"', true);
+  const count = run(
+    `gh pr list \
+      --repo ${FULL_REPO} \
+      --base main \
+      --head develop \
+      --state open \
+      --json number \
+      --jq "length"`,
+    true,
+  );
 
   if (Number(count) > 0) {
     fail('이미 열려있는 develop → main 릴리즈 PR이 있습니다.');
   }
-}
-
-/* ------------------ release notes ------------------ */
-function generateReleaseNotes(version) {
-  const output = run(
-    `gh api repos/${OWNER}/${REPO}/releases/generate-notes \
-      -f tag_name=v${version} \
-      -f target_commitish=main`,
-    true,
-  );
-
-  const json = JSON.parse(output);
-
-  if (!json.body) {
-    fail('릴리즈 노트 생성에 실패했습니다.');
-  }
-
-  return json.body;
 }
 
 /* ------------------ main ------------------ */
@@ -109,6 +100,7 @@ rl.question('다음 배포 버전을 입력해주세요 ex) X.Y.Z : ', version =
   if (pkg.version === version) {
     fail(`이미 package.json version이 ${version} 입니다.`);
   }
+
   pkg.version = version;
   fs.writeFileSync(PACKAGE_JSON, JSON.stringify(pkg, null, 2) + '\n');
 
@@ -135,21 +127,15 @@ rl.question('다음 배포 버전을 입력해주세요 ex) X.Y.Z : ', version =
   /* 5. push */
   run('git push test develop');
 
-  /* 6. release notes 생성 */
-  console.log('\n📝 릴리즈 노트 생성 중...');
-  const releaseNotes = generateReleaseNotes(version);
-  fs.writeFileSync(TEMP_RELEASE_NOTE, releaseNotes);
-
-  /* 7. PR 생성 */
+  /* 6. create PR */
   run(
     `gh pr create \
+      --repo ${FULL_REPO} \
       --base main \
       --head develop \
       --title "v${version}" \
-      --body-file "${TEMP_RELEASE_NOTE}"`,
+      --generate-notes`,
   );
-
-  fs.unlinkSync(TEMP_RELEASE_NOTE);
 
   console.log('\n✅ 릴리즈 PR 생성 완료');
   rl.close();
