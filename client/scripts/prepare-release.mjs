@@ -138,7 +138,7 @@ rl.question('다음 배포 버전을 입력해주세요 ex) X.Y.Z : ', version =
     run(`git commit -m "chore: release v${version}"`);
 
     /* 4. push */
-    run('git push origin develop');
+    run('git push test develop');
 
     /* 5. 릴리즈 노트 */
     const notes = generateReleaseNotes(version);
