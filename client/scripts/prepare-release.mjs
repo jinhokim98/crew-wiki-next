@@ -80,6 +80,23 @@ function ensureNoOpenReleasePr() {
   }
 }
 
+/* ------------------ rebase with auto resolve ------------------ */
+function rebaseOntoMain() {
+  console.log('\n🔄 develop 브랜치를 main 기준으로 rebase 합니다');
+  run('git fetch test');
+
+  try {
+    run('git rebase test/main');
+  } catch {
+    console.log('\n⚠️ rebase 충돌 발생 → layout.tsx 자동 해결');
+
+    // rebase 기준에서 --theirs = develop
+    run(`git checkout --theirs ${LAYOUT_TSX}`);
+    run(`git add ${LAYOUT_TSX}`);
+    run('git rebase --continue');
+  }
+}
+
 /* ------------------ release notes ------------------ */
 function generateReleaseNotes(version) {
   console.log('\n📝 릴리즈 노트 생성 중...');
@@ -120,11 +137,11 @@ rl.question('다음 배포 버전을 입력해주세요 ex) X.Y.Z : ', version =
 
     console.log(`\n▶ 배포 버전: v${version}`);
 
+    /* 0. rebase */
+    rebaseOntoMain();
+
     /* 1. package.json */
     const pkg = JSON.parse(fs.readFileSync(PACKAGE_JSON, 'utf-8'));
-    if (pkg.version === version) {
-      fail(`이미 package.json version이 ${version} 입니다.`);
-    }
     pkg.version = version;
     fs.writeFileSync(PACKAGE_JSON, JSON.stringify(pkg, null, 2) + '\n');
 
@@ -139,8 +156,7 @@ rl.question('다음 배포 버전을 입력해주세요 ex) X.Y.Z : ', version =
     fs.writeFileSync(LAYOUT_TSX, updatedLayout);
 
     /* 3. 변경사항 확인 */
-    const diff = run('git status --porcelain', true);
-    if (!diff) {
+    if (!run('git status --porcelain', true)) {
       fail('변경된 파일이 없습니다.');
     }
 
@@ -149,11 +165,11 @@ rl.question('다음 배포 버전을 입력해주세요 ex) X.Y.Z : ', version =
     run(`git commit -m "chore: release v${version}"`);
 
     /* 5. push */
-    run('git push test develop');
+    run('git push test develop --force-with-lease');
 
-    /* 6. 릴리즈 노트 생성 */
-    const releaseNotes = generateReleaseNotes(version);
-    fs.writeFileSync(RELEASE_NOTES_TMP, releaseNotes);
+    /* 6. 릴리즈 노트 */
+    const notes = generateReleaseNotes(version);
+    fs.writeFileSync(RELEASE_NOTES_TMP, notes);
 
     /* 7. PR 생성 */
     run(
@@ -165,10 +181,9 @@ rl.question('다음 배포 버전을 입력해주세요 ex) X.Y.Z : ', version =
         --body-file "${RELEASE_NOTES_TMP}"`,
     );
 
-    /* 8. cleanup */
     fs.unlinkSync(RELEASE_NOTES_TMP);
 
-    console.log('\n✅ 릴리즈 PR 생성 완료');
+    console.log('\n🎉 릴리즈 PR 생성 완료 (충돌 자동 해결 포함)');
   } finally {
     rl.close();
   }
